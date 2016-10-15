@@ -5,7 +5,7 @@ import java.math.*;
 import java.security.*;
 import javax.xml.bind.DatatypeConverter;
 
-class Password extends SecureRandom {
+public class Password extends SecureRandom {
 	static final long serialVersionUID = 0;
 
 	static final String SET = "0123456789";
@@ -13,6 +13,11 @@ class Password extends SecureRandom {
 
 	private byte[] md5;
 	private String salt;
+
+	Password()
+	{
+		super();
+	}
 
 	Password(String md5hex, String salt)
 	{
@@ -26,19 +31,27 @@ class Password extends SecureRandom {
 		this.salt= salt;
 	}
 
-	Password(String password)
+	Password(String s)
 	{
 		super();
-		makeSalt();
+		unmarshal(s);
+	}
+
+	static Password newPassword(String password)
+	{
+		Password p = new Password();
+		p.makeSalt();
 
 		try {
-			md5 = MessageDigest
+			p.md5 = MessageDigest
 				.getInstance("MD5")
-				.digest((password + salt).getBytes());
+				.digest((password + p.salt).getBytes());
 		} catch (NoSuchAlgorithmException e) { // will never fail.
 			e.printStackTrace();
 			System.exit(1);
 		}
+
+		return p;
 	}
 
 	public boolean verify(String password)
@@ -62,8 +75,6 @@ class Password extends SecureRandom {
 
 	void makeSalt()
 	{
-		//String set = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
 		StringBuilder salt = new StringBuilder();
 
 		for (int i=0; i<9; ++i)
@@ -72,13 +83,34 @@ class Password extends SecureRandom {
 		this.salt = salt.toString();
 	}
 
+	// util -------------------------------------------------------------------
+	public String marshal()
+	{
+		String asString = "";
+		return DatatypeConverter.printHexBinary(md5)+"|"+salt;
+
+	}
+
+	public void unmarshal(String s)
+	{
+		String[] ss = s.split("\\|");
+		this.md5 = DatatypeConverter.parseHexBinary(ss[0]);
+		this.salt= ss[1];
+	}
+
 	public static void main(String args[]) {
 
-		Password p = new Password("hello");
-		System.out.print  (p.verify("hello")?"y":"n");
-		System.out.print  (p.verify("12345")?"y":"n");
-		p.salt = "x";
-		System.out.print  (p.verify("hello")?"y":"n");
-		System.out.println(p.verify("12345")?"y":"n");
+		Password a = new Password("hello");
+		Password b = new Password("12345");
+
+		System.out.print  (a.verify("hello")?"y":"n");
+		System.out.print  (a.verify("12345")?"y":"n");
+		System.out.print  (b.verify("hello")?"y":"n");
+		System.out.println(b.verify("12345")?"y":"n");
+
+		System.out.println(b.marshal());
+		b.unmarshal(a.marshal()); // b is now equal to a!
+		System.out.println(a.marshal());
+		System.out.println(b.marshal());
 	}
 }
