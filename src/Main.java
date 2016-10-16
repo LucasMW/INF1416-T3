@@ -36,8 +36,9 @@ public class Main extends Application {
 		window = primaryStage;
 		window.setTitle("INF1416");
 
-		u = Login.getUser(db);
-		Login.validatePassword(u);
+		do {
+			u = Login.getUser(db);
+		} while (Login.validatePassword(u));
 
 	}
 

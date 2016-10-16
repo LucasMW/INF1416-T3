@@ -20,6 +20,7 @@ public class Login {
 
 	static User u;
 	static List<String[]> clicks;
+	static int numTries = 0;
 
 	public static User getUser(DB db) {
 		Stage window = new Stage();
@@ -90,6 +91,11 @@ public class Login {
 			Button btn = new Button(ss[0]+" "+ss[1]+" "+ss[2]);
 			GridPane.setConstraints(btn, i/2, i%2);
 			btn.setOnAction(e -> {
+				if (numTries == 3) {
+					u.block();
+					window.close();
+				}
+
 				if (clicks.size() == 0) {
 					nLabel.setText("");
 				}
@@ -103,6 +109,7 @@ public class Login {
 						validPassword = true;
 						window.close();
 					} else {
+						numTries++;
 						nLabel.setText("(incorrect)");
 						clicks.clear();
 					}
@@ -184,4 +191,8 @@ public class Login {
 		}
 		return false;
 	}
+
+
+	
+
 }
