@@ -9,12 +9,12 @@ import javafx.geometry.*;
 public class UserForm {
 
 	//Create variable
-	static boolean answer;
+	static User newUser;
 
-	public static boolean display(String title, String message) {
+	public static User display() {
 		Stage window = new Stage();
 		window.initModality(Modality.APPLICATION_MODAL);
-		window.setTitle(title);
+		window.setTitle("INF1416:New user");
 		window.setMinWidth(250);
 
 		GridPane grid = new GridPane();
@@ -45,7 +45,15 @@ public class UserForm {
 
 		Button createButton = new Button("Criar");
 		GridPane.setConstraints(createButton, 0, 4);
-		createButton.setOnAction(e -> { window.close(); });
+		createButton.setOnAction(e -> {
+
+			newUser          = new User();
+			newUser.name     = nameInput.getText();
+			newUser.login    = loginInput.getText();
+			//newUser.password = Password.newPassword(passInput.getText());
+		
+			window.close();
+		});
 
 		Button cancelButton = new Button("Cancelar");
 		GridPane.setConstraints(cancelButton, 1, 4);
@@ -63,6 +71,8 @@ public class UserForm {
 		window.setScene(scene);
 		window.showAndWait();
 
-		return answer;
+		// TODO: verify confirmation
+
+		return newUser;
 	}
 }

@@ -39,7 +39,7 @@ public class Login {
 		GridPane.setConstraints(nameLabel, 0, 0);
 
 		Label errorLabel = new Label("");
-		GridPane.setConstraints(errorLabel, 2, 0);
+		GridPane.setConstraints(errorLabel, 0, 1);
 
 		TextField loginInput = new TextField();
 		GridPane.setConstraints(loginInput, 1, 0);
@@ -165,6 +165,9 @@ public class Login {
 			} else {
 				numTries++;
 				errorLabel.setText("(incorrect)");
+				tanEntry = u.tanList.nextIndex();
+				tanLabel.setText("TAN entry " + (tanEntry+1) + ":");
+				tanInput.setPromptText("TAN entry " + (tanEntry+1));
 			}
 
 			if (numTries == 3) {

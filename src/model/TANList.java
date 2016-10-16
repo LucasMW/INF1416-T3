@@ -39,11 +39,13 @@ public class TANList extends SecureRandom {
 			create(N);
 
 		Collections.shuffle(indices);
+		System.out.println(indices.get(0));
 		return indices.get(0);
 	}
 
 	public boolean check(String entry, int i)
 	{
+		System.out.println(i+":"+entries[i]+" "+entry);
 		if (entries[i].equals(entry)) {
 			indices.remove(0);
 			return true;

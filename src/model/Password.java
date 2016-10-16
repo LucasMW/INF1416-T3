@@ -37,7 +37,7 @@ public class Password extends SecureRandom {
 		unmarshal(s);
 	}
 
-	static Password newPassword(String password)
+	public static Password newPassword(String password)
 	{
 		Password p = new Password();
 		p.makeSalt();

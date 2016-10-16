@@ -37,17 +37,18 @@ public class Main extends Application {
 		window = primaryStage;
 		window.setTitle("INF1416");
 
-		do {
-			do {
-				u = Login.getUser(db);
-			} while (!Login.validatePassword(db, u));
-		} while (!Login.validateTANEntry(db, u));
+		u = User.byLogin(db.conn(), "admin");
+		//do {
+		//	do {
+		//		u = Login.getUser(db);
+		//	} while (!Login.validatePassword(db, u));
+		//} while (!Login.validateTANEntry(db, u));
 
 		// main menu
 
 		Stage window = new Stage();
 		window.initModality(Modality.APPLICATION_MODAL);
-		window.setTitle("INF1416:Login (Etapa 1)");
+		window.setTitle("INF1416:Menu");
 		window.setMinWidth(250);
 
 		GridPane grid = new GridPane();
@@ -55,24 +56,60 @@ public class Main extends Application {
 		grid.setVgap(8);
 		grid.setHgap(10);
 
-		Label nameLabel = new Label("Username: " + u.name);
+		Label nameLabel = new Label("Name: ");
 		GridPane.setConstraints(nameLabel, 0, 0);
 
-		Label loginLabel = new Label("Login: " + u.login);
+		Label nameLabel_= new Label(u.name);
+		GridPane.setConstraints(nameLabel_, 1, 0);
+
+		Label loginLabel = new Label("Login: ");
 		GridPane.setConstraints(loginLabel, 0, 1);
 
-		Label groupsLabel = new Label("Groups: " + u.groups);
+		Label loginLabel_= new Label(u.login);
+		GridPane.setConstraints(loginLabel_, 1, 1);
+
+		Label groupsLabel = new Label("Groups: ");
 		GridPane.setConstraints(groupsLabel, 0, 2);
 
+		Label groupsLabel_ = new Label(u.groupsToString());
+		GridPane.setConstraints(groupsLabel_, 1, 2);
+
+		Button newUserBtn = new Button("Cadastrar usuario");
+		GridPane.setConstraints(newUserBtn, 0, 3);
+		newUserBtn.setOnAction(e -> {
+			User newUser = UserForm.display();
+			System.out.println(newUser);
+		});
+
+		Button loadKeyBtn = new Button("Carregar chave privada");
+		GridPane.setConstraints(loadKeyBtn, 0, 4);
+		GridPane.setFillWidth  (loadKeyBtn, true);
+		GridPane.setFillHeight (loadKeyBtn, true);
+
+
+		Button fsBtn = new Button("Consultar arquivos");
+		GridPane.setConstraints(fsBtn, 0, 5);
+		GridPane.setFillWidth  (fsBtn, true);
+		GridPane.setFillHeight (fsBtn, true);
+
+		Button exitBtn = new Button("Sair");
+		GridPane.setConstraints(exitBtn, 0, 6);
+		GridPane.setFillWidth  (exitBtn, true);
+		GridPane.setFillHeight (exitBtn, true);
+		exitBtn.setOnAction(e -> {
+			window.close();
+		});
+
 		grid.getChildren().addAll(
-				nameLabel,
-				loginLabel,
-				groupsLabel);
+				nameLabel, nameLabel_,
+				loginLabel, loginLabel_,
+				groupsLabel, groupsLabel_,
+				newUserBtn, loadKeyBtn, fsBtn, exitBtn
+				);
 
 		Scene scene = new Scene(grid, 800, 600);
 		window.setScene(scene);
 		window.showAndWait();
 
 	}
-
 }
