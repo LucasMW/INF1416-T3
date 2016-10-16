@@ -56,7 +56,7 @@ public class Main extends Application {
 		Stage window = new Stage();
 		window.initModality(Modality.APPLICATION_MODAL);
 		window.setTitle("INF1416:Menu");
-		window.setMinWidth(300);
+		window.setMinWidth(400);
 		window.setMinHeight(300);
 
 		GridPane grid = new GridPane();
@@ -99,7 +99,7 @@ public class Main extends Application {
 			newUserBtn = new Button("Cadastrar usuario");
 			GridPane.setConstraints(newUserBtn, 0, 5);
 			newUserBtn.setOnAction(e -> {
-				User newUser = UserForm.newUser();
+				User newUser = UserForm.createUser(db);
 				if (newUser != null) {
 					newUser.tanList.saveToFile("./"+newUser.login+"-tan.txt");
 					newUser.store(db.conn());
@@ -136,7 +136,6 @@ public class Main extends Application {
 			} catch (Exception se) {
 				System.out.println("corrupted file");
 			}
-
 		});
 
 		Button fsBtn = new Button("Consultar arquivos");

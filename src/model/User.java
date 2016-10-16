@@ -28,43 +28,75 @@ public class User {
 		groups = new HashSet<String>();
 	}
 
-	public static User byLogin(Connection conn, String login)
+	public static ResultSet queryByLogin(Connection conn, String login)
 	{
 		try {
 			String query = "select * from users where login="+"'"+login+"';\n";
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery(query);
+			return rs;
 
-			if (rs.next()) {
-				User u = new User();
-				u.id          = rs.getInt     ("id");
-				u.login       = rs.getString  ("login");
-				u.name        = rs.getString  ("name");
-				u.description = rs.getString  ("description");
-
-				u.cert        = rs.getString  ("cert");
-				//u.privKeyPath = rs.getString  ("privKeyPath");
-
-				u.tanList  = new TANList (rs.getString ("tanList"));
-				u.password = new Password(rs.getString ("password"));
-
-				u.totalAccesses = rs.getInt   ("totalAccesses");
-				u.isAdmin       = rs.getInt   ("isAdmin") != 0 ? true : false;
-
-				String ts       = rs.getString("blockedUntil");
-				if (ts != null) u.blockedUntil = LocalDateTime.parse(ts);
-				else            u.blockedUntil = LocalDateTime.now(Clock.systemUTC());
-
-				rs.close();
-				u.loadGroups(conn);
-
-				return u;
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		return null;
+	}
+
+	public static boolean byLoginExists(Connection conn, String login)
+	{
+		ResultSet rs = queryByLogin(conn, login);
+		try {
+			if (rs.next()) {
+				rs.close();
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public static User createFromResultSet(Connection conn, ResultSet rs)
+		throws Exception
+	{
+		if (rs.next()) {
+			User u = new User();
+			u.id          = rs.getInt     ("id");
+			u.login       = rs.getString  ("login");
+			u.name        = rs.getString  ("name");
+			u.description = rs.getString  ("description");
+
+			u.cert        = rs.getString  ("cert");
+			//u.privKeyPath = rs.getString  ("privKeyPath");
+
+			u.tanList  = new TANList (rs.getString ("tanList"));
+			u.password = new Password(rs.getString ("password"));
+
+			u.totalAccesses = rs.getInt   ("totalAccesses");
+			u.isAdmin       = rs.getInt   ("isAdmin") != 0 ? true : false;
+
+			String ts       = rs.getString("blockedUntil");
+			if (ts != null) u.blockedUntil = LocalDateTime.parse(ts);
+			else            u.blockedUntil = LocalDateTime.now(Clock.systemUTC());
+
+			rs.close();
+			u.loadGroups(conn);
+
+			return u;
+		}
+
+		return null;
+	}
+
+	public static User byLogin(Connection conn, String login)
+	{
+		try {
+			return createFromResultSet(conn, queryByLogin(conn, login));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public void loadGroups(Connection conn)
