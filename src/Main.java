@@ -95,18 +95,26 @@ public class Main extends Application {
 			newUserBtn = new Button("Cadastrar usuario");
 			GridPane.setConstraints(newUserBtn, 0, 5);
 			newUserBtn.setOnAction(e -> {
-				User newUser = UserForm.display();
-				System.out.println(newUser);
+				User newUser = UserForm.newUser();
+				if (newUser != null) {
+					newUser.tanList.saveToFile("./"+newUser.login+"-tan.txt");
+					newUser.store(db.conn());
+				}
 			});
 			grid.getChildren().addAll(newUserBtn);
 		}
 
-		Button loadKeyBtn = new Button("Carregar chave privada");
-		GridPane.setConstraints(loadKeyBtn, 0, 6);
-		GridPane.setFillWidth  (loadKeyBtn, true);
-		GridPane.setFillHeight (loadKeyBtn, true);
-		loadKeyBtn.setOnAction(e -> {
-			PrivateKeyForm.open();
+		Label  sessionLabel= new Label("");
+		GridPane.setConstraints(sessionLabel, 1, 6);
+		Button sessionBtn = new Button("Carregar chave privada");
+		GridPane.setConstraints(sessionBtn, 0, 6);
+		GridPane.setFillWidth  (sessionBtn, true);
+		GridPane.setFillHeight (sessionBtn, true);
+		sessionBtn.setOnAction(e -> {
+			fsSession = SessionForm.open(u.cert);
+			if (fsSession != null) {
+				sessionLabel.setText("loaded");
+			}
 		});
 
 
@@ -129,7 +137,9 @@ public class Main extends Application {
 				loginLabel, loginLabel_,
 				groupsLabel, groupsLabel_,
 				acessesLabel, acessesLabel_,
-				loadKeyBtn, fsBtn, exitBtn
+				sessionBtn, sessionLabel,
+				fsBtn,
+				exitBtn
 				);
 
 		Scene scene = new Scene(grid, 800, 600);

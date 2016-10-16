@@ -102,7 +102,6 @@ public class User {
 	}
 
 	public boolean store(Connection conn)
-		throws Exception
 	{
 		if (User.byLogin(conn, login) != null)
 			return false;

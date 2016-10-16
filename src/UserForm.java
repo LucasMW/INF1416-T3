@@ -1,4 +1,4 @@
-import model.User;
+import model.*;
 
 import javafx.stage.*;
 import javafx.scene.*;
@@ -11,7 +11,7 @@ public class UserForm {
 	//Create variable
 	static User newUser;
 
-	public static User display() {
+	public static User newUser() {
 		Stage window = new Stage();
 		window.initModality(Modality.APPLICATION_MODAL);
 		window.setTitle("INF1416:New user");
@@ -50,7 +50,8 @@ public class UserForm {
 			newUser          = new User();
 			newUser.name     = nameInput.getText();
 			newUser.login    = loginInput.getText();
-			//newUser.password = Password.newPassword(passInput.getText());
+			newUser.password = Password.newPassword(passInput.getText());
+			newUser.tanList  = new TANList();
 		
 			window.close();
 		});

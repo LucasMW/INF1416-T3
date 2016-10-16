@@ -1,3 +1,5 @@
+import fs.Session;
+
 import java.io.File;
 /*from  w  w  w  .  j  ava2s .com*/
 import javafx.application.Application;
@@ -18,11 +20,14 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 
-public class PrivateKeyForm {
+public class SessionForm {
 
 	static String privateKeyFile;
+	static Session session;
 
-	public static String open() {
+	public static Session open(String certificate)
+	{
+
 		Stage window = new Stage();
 		window.initModality(Modality.APPLICATION_MODAL);
 		window.setTitle("INF1416:Load Private Key");
@@ -38,21 +43,35 @@ public class PrivateKeyForm {
 		GridPane.setConstraints(fileLabel, 0, 0);
 		GridPane.setConstraints(fileInput, 1, 0);
 
+		Label         errorLabel    = new Label("");
+		Label         passwordLabel = new Label("Key passowrd:");
+		PasswordField passwordField = new PasswordField();
+		passwordField.setPromptText("Your password");
+		GridPane.setConstraints(errorLabel,    2, 1);
+		GridPane.setConstraints(passwordLabel, 0, 1);
+		GridPane.setConstraints(passwordField, 1, 1);
+
 		Button btnOk = new Button("ok");
 		Button btnCancel = new Button("cancel");
-		GridPane.setConstraints(btnOk,     0, 1);
-		GridPane.setConstraints(btnCancel, 1, 1);
+		GridPane.setConstraints(btnOk,     0, 2);
+		GridPane.setConstraints(btnCancel, 1, 2);
 
 		btnOk.setOnAction(e -> {
 			privateKeyFile = fileInput.getText();
-			window.close();
+			if (verifySession(privateKeyFile,
+						passwordField.getText(),
+						certificate)) {
+				window.close();
+			} else {
+				errorLabel.setText("(key with certificate missmatch)");
+			}
 		});
+		passwordField.setOnAction(e->btnOk.getOnAction());
 
 		btnCancel.setOnAction(e -> {
 			privateKeyFile = null;
 			window.close();
 		});
-
 
 		Button btnLoad = new Button("+");
 		GridPane.setConstraints(btnLoad, 2, 0);
@@ -69,6 +88,7 @@ public class PrivateKeyForm {
 
 		grid.getChildren().addAll(
 				fileLabel, fileInput, btnLoad,
+				passwordLabel, passwordField, errorLabel,
 				btnOk, btnCancel);
 
 		grid.setAlignment(Pos.CENTER);
@@ -76,6 +96,15 @@ public class PrivateKeyForm {
 		window.setScene(scene);
 		window.showAndWait();
 
-		return privateKeyFile;
+		return session;
+	}
+
+	static boolean verifySession(String keyFile, String password, String cert) {
+		try {
+			session = new Session(keyFile, password, cert, true);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 }

@@ -54,14 +54,18 @@ public class TANList extends SecureRandom {
 	}
 
 	public void saveToFile(String fname)
-		throws Exception
 	{
-		FileWriter bw = new FileWriter(fname);
-		for (String s: entries) {
-			bw.write(s+"\n");
-		}
+		System.out.println(fname);
+		try {
+			FileWriter bw = new FileWriter(fname);
+			for (String s: entries) {
+				bw.write(s+"\n");
+			}
 
-		bw.close();
+			bw.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	// util -------------------------------------------------------------------

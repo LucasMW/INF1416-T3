@@ -26,7 +26,7 @@ public class Session {
 		throw new SecurityException("keys missmatch");
 	}
 
-	Session(String file, String pass, String certFile, boolean inMemory)
+	public Session(String file, String pass, String certFile, boolean inMemory)
 		throws Exception
 	{
 		FileHelper f = new FileHelper(file, Util.DESCipher(pass));
