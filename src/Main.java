@@ -29,10 +29,6 @@ public class Main extends Application {
 		db     = new DB();
 		db.connect("main.db");
 
-		//DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		//Date date = new Date();
-		//System.out.println(dateFormat.format(date));
-
 		window = primaryStage;
 		window.setTitle("INF1416");
 
@@ -41,6 +37,35 @@ public class Main extends Application {
 				u = Login.getUser(db);
 			} while (!Login.validatePassword(db, u));
 		} while (!Login.validateTANEntry(db, u));
+
+		// main menu
+
+		Stage window = new Stage();
+		window.initModality(Modality.APPLICATION_MODAL);
+		window.setTitle("INF1416:Login (Etapa 1)");
+		window.setMinWidth(250);
+
+		GridPane grid = new GridPane();
+		grid.setPadding(new Insets(10, 10, 10, 10));
+		grid.setVgap(8);
+		grid.setHgap(10);
+
+		Label nameLabel = new Label("Username: " + u.name);
+		GridPane.setConstraints(nameLabel, 0, 0);
+
+		Label loginLabel = new Label("Login: " + u.login);
+		GridPane.setConstraints(nameLabel, 0, 1);
+
+		Label loginLabel = new Label("Groups: " + u.group);
+		GridPane.setConstraints(nameLabel, 0, 3);
+
+		grid.getChildren().addAll(
+				nameLabel,
+				loginInput, loginButton, errorLabel);
+		Scene scene = new Scene(grid, 800, 600);
+		window.setScene(scene);
+		window.showAndWait();
+
 	}
 
 }
