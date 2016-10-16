@@ -53,7 +53,8 @@ public class Main extends Application {
 		Stage window = new Stage();
 		window.initModality(Modality.APPLICATION_MODAL);
 		window.setTitle("INF1416:Menu");
-		window.setMinWidth(250);
+		window.setMinWidth(300);
+		window.setMinHeight(250);
 
 		GridPane grid = new GridPane();
 		grid.setPadding(new Insets(10, 10, 10, 10));
