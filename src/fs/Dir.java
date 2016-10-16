@@ -50,7 +50,7 @@ class Dir {
 	{
 		Session s = new Session(
 				"data/Keys/userpriv-pkcs8-pem-des.key", "teste123",
-				"data/Keys/usercert-x509.crt");
+				"data/Keys/usercert-x509.crt", false);
 
 		Dir root = new Dir(s, "./data/Files/");
 

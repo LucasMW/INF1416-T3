@@ -72,7 +72,7 @@ class File {
 	{
 		Session s = new Session(
 				"data/Keys/userpriv-pkcs8-pem-des.key", "teste123",
-				"data/Keys/usercert-x509.crt");
+				"data/Keys/usercert-x509.crt", false);
 
 		File f = new File(s, "./data/Files/index");
 	}

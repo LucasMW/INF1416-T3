@@ -12,7 +12,7 @@ public class User {
 	public String   description;
 
 	public String   cert;
-	public String   privKeyPath;
+	//public String   privKeyPath;
 
 	public Password password;
 	public TANList  tanList;
@@ -70,7 +70,7 @@ public class User {
 	public void loadGroups(Connection conn)
 	{
 		try {
-			String queryGroups = String.format(
+			String query = String.format(
 					"select (groups.name)\n"+
 					"from groups\n"+
 					"	join ingroup on groups.id = ingroup.group_id\n"+
@@ -79,7 +79,7 @@ public class User {
 					login);
 
 			Statement st = conn.createStatement();
-			ResultSet rs = st.executeQuery(queryGroups);
+			ResultSet rs = st.executeQuery(query);
 
 			while (rs.next()) {
 				groups.add(rs.getString("name"));
@@ -127,6 +127,24 @@ public class User {
 		} catch (Exception e) {
 			System.out.println("ERROR: sql insert");
 			return false;
+		}
+	}
+
+	public void updateTotalAccesses(Connection conn)
+	{
+		String query =
+			"update users " +
+			String.format(
+					"set totalAccesses = %d where id=%d",
+					totalAccesses,
+					id);
+
+		try {
+		  Statement stmt = conn.createStatement();
+		  stmt.executeUpdate(query);
+		} catch (Exception e) {
+			System.out.println("ERROR: sql update TanList");
+			e.printStackTrace();
 		}
 	}
 

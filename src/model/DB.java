@@ -3,14 +3,13 @@ import java.sql.*;
 
 public class DB {
 
-	private static DB db;
-	Connection connection=null;
+	Connection conn=null;
 
 	public void connect(String file)
 	{
 		try { // this is a fatal error!
 			Class.forName("org.sqlite.JDBC");
-			connection = DriverManager.getConnection("jdbc:sqlite:"+file);
+			conn = DriverManager.getConnection("jdbc:sqlite:"+file);
 		} catch (Exception e) {
 			System.out.println("fatal error: db failure.");
 			e.printStackTrace();
@@ -27,17 +26,32 @@ public class DB {
 
 	public Connection conn()
 	{
-		return this.connection;
+		return this.conn;
 	}
 
-	//public void time(int seconds)
-	//{
-	//	String Query = "select strftime('%Y-%M-%d %H:%M:%S', 'now', '+"
-	//		+seconds+" second');";
-	//}
+	public int count(String table)
+	{
+		try {
+			String query = String.format("select count(*) as total from %s;", table);
+
+			Statement st = conn.createStatement();
+			ResultSet rs = st.executeQuery(query);
+
+			int total = rs.getInt("total");
+
+			rs.close();
+			return total;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return -1;
+	}
 
 	public static void main(String args[]) {
 		DB db = new DB();
 		db.connect("main.db");
+		System.out.println(db.count("users"));
 	}
 }

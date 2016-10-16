@@ -6,7 +6,7 @@ import java.util.*;
 import javax.crypto.*;
 import javax.security.cert.*; // using java.security.cert.* fails to compile
 
-class Session {
+public class Session {
 	public  PrivateKey      key;
 	public  PublicKey       pub;
 	private X509Certificate cert;
@@ -26,15 +26,18 @@ class Session {
 		throw new SecurityException("keys missmatch");
 	}
 
-	Session(String file, String pass, String certFile)
+	Session(String file, String pass, String certFile, boolean inMemory)
 		throws Exception
 	{
 		FileHelper f = new FileHelper(file, Util.DESCipher(pass));
 		key = PEM.readPrivateKey(f.br);
 		f.close();
 
+		InputStream in = inMemory?
+			new ByteArrayInputStream(certFile.getBytes()):
+			new FileInputStream(certFile);
+
 		// load certificate
-		InputStream in = new FileInputStream(certFile);
 		cert = X509Certificate.getInstance(in);
 		in.close();
 
@@ -72,6 +75,6 @@ class Session {
 					"\t- a digital certificate\n");
 			System.exit(1);
 		}
-		Session s = new Session(args[0], args[1], args[2]);
+		Session s = new Session(args[0], args[1], args[2], false);
 	}
 }
