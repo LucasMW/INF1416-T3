@@ -39,13 +39,13 @@ public class Main extends Application {
 		window = primaryStage;
 		window.setTitle("INF1416");
 
-		do {
-			do {
-				u = Login.getUser(db);
-			} while (!Login.validatePassword(db, u));
-		} while (!Login.validateTANEntry(db, u));
+		//do {
+		//	do {
+		//		u = Login.getUser(db);
+		//	} while (!Login.validatePassword(db, u));
+		//} while (!Login.validateTANEntry(db, u));
 		//u = User.byLogin(db.conn(), "asdf");
-		//u = User.byLogin(db.conn(), "admin");
+		u = User.byLogin(db.conn(), "admin");
 		u.totalAccesses++;
 
 		// main menu
@@ -106,10 +106,7 @@ public class Main extends Application {
 		GridPane.setFillWidth  (loadKeyBtn, true);
 		GridPane.setFillHeight (loadKeyBtn, true);
 		loadKeyBtn.setOnAction(e -> {
-			//FileChooser fc = new FileChooser();
-			//File f = fc.setTitle("Escolha o arquivo com a chave privada");
-			//fc.showOpenDialog(window);
-			//fsSession = new Session(
+			PrivateKeyForm.open();
 		});
 
 

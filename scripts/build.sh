@@ -1,1 +1,1 @@
-javac -Xlint:all -d bin `find sample/ src/ -name "*.java"`
+javac -Xlint:all -d bin `find src/ -name "*.java"`
