@@ -1,6 +1,3 @@
-import model.*;
-import fs.*;
-
 import java.util.*;
 
 import javafx.application.Application;
@@ -11,6 +8,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+
+import javafx.stage.*;
+import javafx.scene.*;
+import javafx.scene.layout.*;
+import javafx.scene.control.*;
+import javafx.geometry.*;
+
+import model.*;
 
 public class Main extends Application {
 
@@ -54,14 +59,16 @@ public class Main extends Application {
 		GridPane.setConstraints(nameLabel, 0, 0);
 
 		Label loginLabel = new Label("Login: " + u.login);
-		GridPane.setConstraints(nameLabel, 0, 1);
+		GridPane.setConstraints(loginLabel, 0, 1);
 
-		Label loginLabel = new Label("Groups: " + u.group);
-		GridPane.setConstraints(nameLabel, 0, 3);
+		Label groupsLabel = new Label("Groups: " + u.groups);
+		GridPane.setConstraints(groupsLabel, 0, 2);
 
 		grid.getChildren().addAll(
 				nameLabel,
-				loginInput, loginButton, errorLabel);
+				loginLabel,
+				groupsLabel);
+
 		Scene scene = new Scene(grid, 800, 600);
 		window.setScene(scene);
 		window.showAndWait();

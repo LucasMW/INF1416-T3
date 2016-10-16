@@ -16,6 +16,7 @@ public class User {
 
 	public Password password;
 	public TANList  tanList;
+	public Set<String> groups;
 
 	public boolean  isAdmin;
 	public int      totalAccesses;
@@ -24,6 +25,7 @@ public class User {
 
 	public User()
 	{
+		groups = new HashSet<String>();
 	}
 
 	public static User byLogin(Connection conn, String login)
@@ -54,12 +56,49 @@ public class User {
 				else            u.blockedUntil = LocalDateTime.now(Clock.systemUTC());
 
 				rs.close();
+				u.loadGroups(conn);
+
 				return u;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 		return null;
+	}
+
+	public void loadGroups(Connection conn)
+	{
+		try {
+			String queryGroups = String.format(
+					"select (groups.name)\n"+
+					"from groups\n"+
+					"	join ingroup on groups.id = ingroup.group_id\n"+
+					"	join users   on users.id  = ingroup.user_id\n"+
+					"where users.id=ingroup.user_id and users.login='%s';",
+					login);
+
+			Statement st = conn.createStatement();
+			ResultSet rs = st.executeQuery(queryGroups);
+
+			while (rs.next()) {
+				groups.add(rs.getString("name"));
+			}
+
+			rs.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public String groupsToString()
+	{
+		String all = "";
+		for (String s: groups) {
+			all += s + ", ";
+		}
+		return all;
 	}
 
 	public boolean store(Connection conn)
@@ -174,6 +213,7 @@ public class User {
 		System.out.println("name ="+admin.name);
 		System.out.println("desc ="+admin.description);
 		System.out.println(admin.password.verify("BACADA")?"y":"n");
+		//System.out.println("groups="+admin.groups);
 
 		User u = new User();
 		//u.id;
@@ -189,10 +229,13 @@ public class User {
 		u.isAdmin       = false;
 		u.totalAccesses = 0;
 		//u.blockedUntil  = null;
+		System.out.println("groups="+admin.groupsToString());
 
 		System.out.println("login="+u.login);
 		System.out.println("name ="+u.name);
 		System.out.println("desc ="+u.description);
+		System.out.println("groups="+u.groupsToString());
+
 		System.out.println(u.password.verify("BADACA")?"y":"n");
 		System.out.println(u.store(db.conn())?
 				"insert ok":

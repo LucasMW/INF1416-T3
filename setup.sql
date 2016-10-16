@@ -128,7 +128,11 @@ create table ingroup (
 );
 
 insert into ingroup values (
-	0, 0, 0 -- root is admin
+	0, 0, 0 -- user admin is admin
+);
+
+insert into ingroup values (
+	1, 0, 1 -- user admin is user
 );
 
 -------------------------------------------------------------------------------
