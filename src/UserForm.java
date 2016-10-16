@@ -108,8 +108,12 @@ public class UserForm {
 
 				String pass      = passInput.getText();
 				String passConf  = passConfInput.getText();
-
-				if (pass.equals(passConf)) {
+				if(!passwordIsAcceptable(pass))
+				{
+					 System.out.println("PASSWORD NOT ACCEPTABLE");
+					 passConfLabel_.setText("Senha mal formada");
+				}
+				else if (pass.equals(passConf)) {
 					newUser             = new User();
 					newUser.name        = nameInput.getText();
 					newUser.login       = loginInput.getText();
@@ -157,7 +161,7 @@ public class UserForm {
 
 		Stage window = new Stage();
 		window.initModality(Modality.APPLICATION_MODAL);
-		window.setTitle("INF1416:New user");
+		window.setTitle("INF1416:Novo Usuario");
 		window.setMinWidth(300);
 		window.setMinHeight(250);
 
@@ -205,5 +209,35 @@ public class UserForm {
 
 		return confirm;
 	}
+	private static boolean passwordIsAcceptable(String password)
+	{
+		if(password.length() != 6)
+			return false;
+		String[] sylabs = new String[3];
+		sylabs[0] = password.substring(0, 2);
+		sylabs[1] = password.substring(2, 4);
+		sylabs[2] = password.substring(4, 6);
+		for(String s: sylabs)
+			System.out.println(s);
+		for(String s: sylabs)
+			if(s.length() !=2 )
+			{
+				System.out.println(s);
+				System.out.println("ERROR");
+				return false;
+			}
+		if(sylabs.length != 3)
+		{
+			System.out.println("SERIOUS ERROR");
+			return false;
+		}
+		for(int i=0;i<sylabs.length;i++)
+		{
+			if(sylabs[i].equals(sylabs[(i+1)%3]) || sylabs[i].equals(sylabs[(i+2)%3]))
+					return false;
+		}
+		return true;
+	}
+
 
 }
