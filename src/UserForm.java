@@ -193,7 +193,15 @@ public class UserForm {
 		GridPane.setConstraints(confirmButton, 0, 5);
 		GridPane.setConstraints(cancelButton,  1, 5);
 
-		cancelButton.setOnAction(e -> { window.close(); });
+		confirmButton.setOnAction(e -> {
+			confirm = true;
+			window.close();
+		});
+
+		cancelButton.setOnAction( e -> { window.close();
+			confirm = false;
+			window.close();
+		});
 
 		grid.getChildren().addAll(
 				nameLabel, nameLabel_,
