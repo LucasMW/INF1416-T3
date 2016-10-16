@@ -1,5 +1,6 @@
 package model;
 import java.sql.*;
+import java.time.*;
 
 public class User {
 
@@ -9,7 +10,7 @@ public class User {
 	public String   name;
 	public String   description;
 
-	public String   certPath;
+	public String   cert;
 	public String   privKeyPath;
 
 	public Password password;
@@ -17,38 +18,45 @@ public class User {
 
 	public boolean  isAdmin;
 	public int      totalAccesses;
-	public Date     blockEnds;
+	public Date     blockedUntil;
 
 	public User()
 	{
 	}
 
 	public static User byLogin(Connection conn, String login)
-		throws Exception
 	{
-		String query = "select * from users where login="+"'"+login+"';\n";
-		Statement st = conn.createStatement();
-		try (ResultSet rs = st.executeQuery(query)) {
-			if (rs.next()) {
-				User u = new User();
-				u.id          = rs.getInt     ("id");
-				u.login       = rs.getString  ("login");
-				u.name        = rs.getString  ("name");
-				u.description = rs.getString  ("description");
+		try {
+			String query = "select * from users where login="+"'"+login+"';\n";
+			Statement st = conn.createStatement();
 
-				u.certPath    = rs.getString  ("certPath");
-				u.privKeyPath = rs.getString  ("privKeyPath");
+			try (ResultSet rs = st.executeQuery(query)) {
+				if (rs.next()) {
+					User u = new User();
+					u.id          = rs.getInt     ("id");
+					u.login       = rs.getString  ("login");
+					u.name        = rs.getString  ("name");
+					u.description = rs.getString  ("description");
 
-				u.tanList  = new TANList (rs.getString ("tanList"));
-				u.password = new Password(rs.getString ("password"));
+					u.cert        = rs.getString  ("cert");
+					//u.privKeyPath = rs.getString  ("privKeyPath");
 
-				u.totalAccesses = rs.getInt     ("totalAccesses");
-				u.isAdmin       = rs.getInt     ("isAdmin") != 0 ? true : false;
+					u.tanList  = new TANList (rs.getString ("tanList"));
+					u.password = new Password(rs.getString ("password"));
 
-				// YYYY-MM-DDTHH:MM:SS.SSS 
-				//u.blockedUntil  = null;
-				return u;
+					u.totalAccesses = rs.getInt   ("totalAccesses");
+					u.isAdmin       = rs.getInt   ("isAdmin") != 0 ? true : false;
+
+					// YYYY-MM-DDTHH:MM:SS.SSS 
+					u.blockedUntil  = rs.getDate  ("blockedUntil");
+
+					return u;
+				}
+			} catch (Exception e) {
+				e.getStackTrace();
 			}
+		} catch (Exception e) {
+			e.getStackTrace();
 		}
 		return null;
 	}
@@ -102,6 +110,21 @@ public class User {
 					id);
 	}
 
+	public void updateBlockedUntil(Connection conn)
+	{
+		String query =
+			"update users " +
+			String.format(
+					"set blockedUntil = '%s' where id=%d;",
+					"datetime('now', '+120 seconds')",
+					id);
+	}
+
+	public boolean isBlocked()
+	{
+		return false;
+	}
+
 	public static void main(String args[])
 		throws Exception
 	{
@@ -133,26 +156,25 @@ public class User {
 		u.name          = "asdf";
 		u.description   = "asdf";
 
-		u.certPath      = "asdf";
-		u.privKeyPath   = "asdf";
+		u.cert          = null;
 
 		u.password      = Password.newPassword("BADACA");
 		u.tanList       = new TANList();
 
 		u.isAdmin       = false;
 		u.totalAccesses = 0;
-		u.blockEnds     = null;
+		//u.blockedUntil  = null;
 
 		System.out.println("login="+u.login);
 		System.out.println("name ="+u.name);
 		System.out.println("desc ="+u.description);
 		System.out.println(u.password.verify("BADACA")?"y":"n");
+		System.out.println(u.store(db.conn())?
+				"insert ok":
+				"ERROR: insert failed, login already in use");
 
-		System.out.println(u.tanList.marshal());
+		System.out.println("new tanList:"+u.tanList.marshal());
 		u.tanList       = new TANList();
 		u.updateTanList(db.conn());
-
-		System.out.println(u.store(db.conn())?"insert":"ERROR: login already in use");
-
 	}
 }

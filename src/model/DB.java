@@ -1,7 +1,7 @@
 package model;
 import java.sql.*;
 
-class DB {
+public class DB {
 
 	private static DB db;
 	Connection connection=null;

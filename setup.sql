@@ -8,15 +8,14 @@ create table users (
 	name          char(50)        not null,
 	description   char(50)        not null,
 
-	cert          char(255), -- not null?
-	privKeyPath   char(255), -- not null?
+	cert          char(1024),
 
 	password      char(127)       not null,
 	tanList       char(127)       not null,
 
 	isAdmin       boolean         not null,
 	totalAccesses integer,
-	blockEnds     date
+	blockedUntil  date
 );
 
 -- md5(BACADA000000000) = a3024da4c60f087128a545957cb40c5d
@@ -89,7 +88,7 @@ x0vaYClQGBUMqv8zCnZRjQhu5VMAb2Y9G7WZr8ODDnfTlJSFKekvtocnKdbPPYgM
 x+yh0/gsP/raRytMjOBjSsNAqvloMWQk3SbRyZk5mZ9Zo22RvxtT/vAAiwM=
 -----END CERTIFICATE-----
 	',
-	"./data/Keys/userpriv-pkcs8-pem-des.key",
+	--"./data/Keys/userpriv-pkcs8-pem-des.key",
 
 	"a3024da4c60f087128a545957cb40c5d|000000000",
 	"I2RR|AMSG|WTPU|0BHQ|TUY4|LI28|OCLE|UI16|F3PG|00MF|#8|6|0|3|9|4|5|1|2|7|",
