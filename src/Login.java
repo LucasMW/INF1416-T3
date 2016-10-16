@@ -20,7 +20,7 @@ public class Login {
 
 	static User u;
 	static List<String[]> clicks;
-	static int numTries = 0;
+	static int numTries;
 
 	public static User getUser(DB db) {
 		Stage window = new Stage();
@@ -43,11 +43,13 @@ public class Login {
 		GridPane.setConstraints(loginInput, 1, 0);
 		loginInput.setPromptText("username");
 		loginInput.setOnAction(e -> {
-			if ((u = User.byLogin(db.conn(), loginInput.getText())) != null &&
-					!u.isBlocked()) {
-				window.close();
-			} else {
+			u = User.byLogin(db.conn(), loginInput.getText());
+			if (u == null) {
 				errorLabel.setText("(no such user)");
+			} else if (u.isBlocked()) {
+				errorLabel.setText("(user is blocked)");
+			} else {
+				window.close();
 			}
 		});
 
@@ -67,7 +69,8 @@ public class Login {
 
 	static boolean validPassword = false;
 
-	public static boolean validatePassword(User u) {
+	public static boolean validatePassword(DB db, User u) {
+		numTries = 0;
 		clicks = new ArrayList<String[]>();
 
 		Stage window = new Stage();
@@ -91,11 +94,6 @@ public class Login {
 			Button btn = new Button(ss[0]+" "+ss[1]+" "+ss[2]);
 			GridPane.setConstraints(btn, i/2, i%2);
 			btn.setOnAction(e -> {
-				if (numTries == 3) {
-					u.block();
-					window.close();
-				}
-
 				if (clicks.size() == 0) {
 					nLabel.setText("");
 				}
@@ -114,6 +112,12 @@ public class Login {
 						clicks.clear();
 					}
 				}
+
+				if (numTries == 3) {
+					u.block(db.conn());
+					window.close();
+				}
+
 			});
 			grid.getChildren().addAll(btn);
 		}

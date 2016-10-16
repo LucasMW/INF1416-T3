@@ -1,4 +1,5 @@
 package model;
+import java.util.*;
 import java.sql.*;
 import java.time.*;
 
@@ -18,7 +19,8 @@ public class User {
 
 	public boolean  isAdmin;
 	public int      totalAccesses;
-	public Date     blockedUntil;
+	public LocalDateTime
+	                blockedUntil;
 
 	public User()
 	{
@@ -29,34 +31,33 @@ public class User {
 		try {
 			String query = "select * from users where login="+"'"+login+"';\n";
 			Statement st = conn.createStatement();
+			ResultSet rs = st.executeQuery(query);
 
-			try (ResultSet rs = st.executeQuery(query)) {
-				if (rs.next()) {
-					User u = new User();
-					u.id          = rs.getInt     ("id");
-					u.login       = rs.getString  ("login");
-					u.name        = rs.getString  ("name");
-					u.description = rs.getString  ("description");
+			if (rs.next()) {
+				User u = new User();
+				u.id          = rs.getInt     ("id");
+				u.login       = rs.getString  ("login");
+				u.name        = rs.getString  ("name");
+				u.description = rs.getString  ("description");
 
-					u.cert        = rs.getString  ("cert");
-					//u.privKeyPath = rs.getString  ("privKeyPath");
+				u.cert        = rs.getString  ("cert");
+				//u.privKeyPath = rs.getString  ("privKeyPath");
 
-					u.tanList  = new TANList (rs.getString ("tanList"));
-					u.password = new Password(rs.getString ("password"));
+				u.tanList  = new TANList (rs.getString ("tanList"));
+				u.password = new Password(rs.getString ("password"));
 
-					u.totalAccesses = rs.getInt   ("totalAccesses");
-					u.isAdmin       = rs.getInt   ("isAdmin") != 0 ? true : false;
+				u.totalAccesses = rs.getInt   ("totalAccesses");
+				u.isAdmin       = rs.getInt   ("isAdmin") != 0 ? true : false;
 
-					// YYYY-MM-DDTHH:MM:SS.SSS 
-					u.blockedUntil  = rs.getDate  ("blockedUntil");
+				String ts       = rs.getString("blockedUntil");
+				if (ts != null) u.blockedUntil = LocalDateTime.parse(ts);
+				else            u.blockedUntil = LocalDateTime.now(Clock.systemUTC());
 
-					return u;
-				}
-			} catch (Exception e) {
-				e.getStackTrace();
+				rs.close();
+				return u;
 			}
 		} catch (Exception e) {
-			e.getStackTrace();
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -110,19 +111,27 @@ public class User {
 					id);
 	}
 
-	public void updateBlockedUntil(Connection conn)
+	public void block(Connection conn)
 	{
 		String query =
 			"update users " +
 			String.format(
-					"set blockedUntil = '%s' where id=%d;",
-					"datetime('now', '+120 seconds')",
+					"set blockedUntil = %s where id=%d;",
+					"strftime('%Y-%m-%dT%H:%M:%S', 'now', '+120 seconds')",
 					id);
+
+		try {
+		  Statement stmt = conn.createStatement();
+		  stmt.executeUpdate(query);
+		} catch (Exception e) {
+			System.out.println("ERROR: sql update blocked");
+			e.printStackTrace();
+		}
 	}
 
 	public boolean isBlocked()
 	{
-		return false;
+		return blockedUntil.isAfter(LocalDateTime.now(Clock.systemUTC()));
 	}
 
 	public static void main(String args[])

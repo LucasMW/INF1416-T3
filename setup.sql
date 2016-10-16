@@ -15,7 +15,7 @@ create table users (
 
 	isAdmin       boolean         not null,
 	totalAccesses integer,
-	blockedUntil  date
+	blockedUntil  char(32) -- problems with java select, store as string
 );
 
 -- md5(BACADA000000000) = a3024da4c60f087128a545957cb40c5d

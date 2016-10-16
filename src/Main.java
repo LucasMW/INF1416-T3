@@ -38,7 +38,7 @@ public class Main extends Application {
 
 		do {
 			u = Login.getUser(db);
-		} while (Login.validatePassword(u));
+		} while (!Login.validatePassword(db, u));
 
 	}
 
