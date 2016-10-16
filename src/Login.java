@@ -1,5 +1,4 @@
 import java.util.*;
-import model.*;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -16,11 +15,14 @@ import javafx.scene.layout.*;
 import javafx.scene.control.*;
 import javafx.geometry.*;
 
+import model.*;
+
 public class Login {
 
 	static User u;
 	static List<String[]> clicks;
 	static int numTries;
+	static int tanEntry;
 
 	public static User getUser(DB db) {
 		Stage window = new Stage();
@@ -129,6 +131,62 @@ public class Login {
 		return validPassword;
 	}
 
+	static boolean validTANList;
+
+	public static boolean validateTANEntry(DB db, User u) {
+		numTries = 0;
+		tanEntry = u.tanList.nextIndex();
+
+		Stage window = new Stage();
+		window.initModality(Modality.APPLICATION_MODAL);
+		window.setTitle("INF1416:TANList (Etapa 3)");
+		window.setMinWidth(250);
+
+		GridPane grid = new GridPane();
+		grid.setPadding(new Insets(10, 10, 10, 10));
+		grid.setVgap(8);
+		grid.setHgap(10);
+
+		Label tanLabel = new Label("TAN entry " + (tanEntry+1) + ":");
+		GridPane.setConstraints(tanLabel, 0, 0);
+
+		Label errorLabel = new Label("");
+		GridPane.setConstraints(errorLabel, 2, 0);
+
+		TextField tanInput = new TextField();
+		GridPane.setConstraints(tanInput, 1, 0);
+		tanInput.setPromptText("TAN entry " + (tanEntry+1));
+		tanInput.setOnAction(e -> {
+			if (u.tanList.check(tanInput.getText(), tanEntry)) {
+				u.updateTanList(db.conn());
+				System.out.println(u.tanList.marshal());
+				validTANList = true;
+				window.close();
+			} else {
+				numTries++;
+				errorLabel.setText("(incorrect)");
+			}
+
+			if (numTries == 3) {
+				u.block(db.conn());
+				window.close();
+			}
+		});
+
+		Button tanButton = new Button("Confirm");
+		GridPane.setConstraints(tanButton, 1, 1);
+		tanButton.setOnAction(tanInput.getOnAction());
+
+		grid.getChildren().addAll(
+				tanLabel,
+				tanInput, tanButton, errorLabel);
+		Scene scene = new Scene(grid, 800, 600);
+		window.setScene(scene);
+		window.showAndWait();
+
+		return validTANList;
+	}
+
 	static final String[] phonems = {
 		"BA", "BE", "BO",
 		"CA", "CE", "CO",
@@ -150,36 +208,6 @@ public class Login {
 			btns.add(label);
 		}
 
-		//for (int i=0; i<btns.size(); ++i) {
-		//	String[] ss = btns.get(i);
-
-		//	System.out.println(ss[0]+" "+ss[1]+" "+ss[2]);
-
-		//	Button btn = new Button(ss[0]+" "+ss[1]+" "+ss[2]);
-		//	GridPane.setConstraints(btn, i/2, i%2);
-		//	btn.setOnAction(e -> {
-		//		if (clicks.size() < 2) {
-		//			System.out.println(clicks.size());
-		//			clicks.add(btn.getText().split(" "));
-		//			return;
-		//		}
-		//		if (clicks.size() < 3) {
-		//			System.out.println(clicks.size());
-		//			clicks.add(btn.getText().split(" "));
-		//		}
-
-		//		if (verifyCombinations(clicks, "", 0)) {
-		//			// correct
-		//			System.out.println("correct");
-		//		} else {
-		//			// incorrect
-		//			System.out.println("incorrect");
-		//		}
-		//	});
-
-		//	grid.getChildren().addAll(btn);
-		//}
-
 		return btns;
 	}
 
@@ -195,8 +223,4 @@ public class Login {
 		}
 		return false;
 	}
-
-
-	
-
 }

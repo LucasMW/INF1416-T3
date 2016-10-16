@@ -37,9 +37,10 @@ public class Main extends Application {
 		window.setTitle("INF1416");
 
 		do {
-			u = Login.getUser(db);
-		} while (!Login.validatePassword(db, u));
-
+			do {
+				u = Login.getUser(db);
+			} while (!Login.validatePassword(db, u));
+		} while (!Login.validateTANEntry(db, u));
 	}
 
 }

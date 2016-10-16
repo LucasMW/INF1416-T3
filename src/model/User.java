@@ -99,6 +99,14 @@ public class User {
 					"set tanList = '%s' where id=%d",
 					tanList.marshal(),
 					id);
+
+		try {
+		  Statement stmt = conn.createStatement();
+		  stmt.executeUpdate(query);
+		} catch (Exception e) {
+			System.out.println("ERROR: sql update TanList");
+			e.printStackTrace();
+		}
 	}
 
 	public void updateCert(Connection conn)
@@ -109,6 +117,14 @@ public class User {
 					"set cert = '%s' where id=%d",
 					cert,
 					id);
+
+		try {
+		  Statement stmt = conn.createStatement();
+		  stmt.executeUpdate(query);
+		} catch (Exception e) {
+			System.out.println("ERROR: sql update Cert");
+			e.printStackTrace();
+		}
 	}
 
 	public void block(Connection conn)

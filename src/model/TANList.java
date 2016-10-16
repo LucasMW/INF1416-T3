@@ -5,7 +5,7 @@ import java.util.*;
 import java.security.*;
 import javax.xml.bind.DatatypeConverter;
 
-class TANList extends SecureRandom {
+public class TANList extends SecureRandom {
 	static final long serialVersionUID = 0;
 
 	static final String SET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -39,12 +39,16 @@ class TANList extends SecureRandom {
 			create(N);
 
 		Collections.shuffle(indices);
-		return indices.remove(0);
+		return indices.get(0);
 	}
 
 	public boolean check(String entry, int i)
 	{
-		return entries[i].equals(entry);
+		if (entries[i].equals(entry)) {
+			indices.remove(0);
+			return true;
+		}
+		return false;
 	}
 
 	public void saveToFile(String fname)
