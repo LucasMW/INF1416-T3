@@ -6,7 +6,7 @@ import java.util.*;
 import javax.crypto.*;
 import javax.security.cert.*; // using java.security.cert.* fails to compile
 
-class File {
+public class File {
 	static final String envSuffix = ".env"; // digital envelope
 	static final String encSuffix = ".enc"; // encoded data file
 	static final String asdSuffix = ".asd"; // digital signature
@@ -53,6 +53,17 @@ class File {
 
 		if (sig.verify(asd) == false)
 			throw new SecurityException();
+	}
+
+	public void save(String fileName)
+	{
+		try {
+			FileOutputStream fos = new FileOutputStream(fileName);
+			fos.write(data);
+			fos.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public InputStream asInputStream()

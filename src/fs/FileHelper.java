@@ -54,6 +54,23 @@ class FileHelper {
 		return os.toByteArray();
 	}
 
+	//public void write(String file)
+	//	throws Exception
+	//{
+	//	FileInputStream      fis = new FileInputStream(file);
+	//	ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+	//	int n;
+	//	byte[] data = new byte[4096];
+
+	//	while ((n = fis.read(data, 0, data.length)) != -1) {
+	//		os.write(data, 0, n);
+	//	}
+
+	//	fis.close();
+	//	return os.toByteArray();
+	//}
+
 	public void close()
 		throws Exception
 	{

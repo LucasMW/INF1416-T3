@@ -16,6 +16,7 @@ public class UserForm {
 		window.initModality(Modality.APPLICATION_MODAL);
 		window.setTitle("INF1416:New user");
 		window.setMinWidth(250);
+		window.setMinHeight(250);
 
 		GridPane grid = new GridPane();
 		grid.setPadding(new Insets(10, 10, 10, 10));

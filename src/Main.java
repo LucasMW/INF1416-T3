@@ -1,5 +1,7 @@
 import java.util.*;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -25,6 +27,7 @@ public class Main extends Application {
 	DB     db;
 	User    u;
 	Session fsSession;
+	Dir     root;
 
 	public static void main(String[] args)
 	{
@@ -54,7 +57,7 @@ public class Main extends Application {
 		window.initModality(Modality.APPLICATION_MODAL);
 		window.setTitle("INF1416:Menu");
 		window.setMinWidth(300);
-		window.setMinHeight(250);
+		window.setMinHeight(300);
 
 		GridPane grid = new GridPane();
 		grid.setPadding(new Insets(10, 10, 10, 10));
@@ -119,10 +122,38 @@ public class Main extends Application {
 		});
 
 
+		ListView<String> filesList = new ListView<String>();
+		GridPane.setConstraints(filesList, 0, 9);
+		filesList.setOnMouseClicked(e -> {
+
+			String fileName   = filesList.getSelectionModel().getSelectedItem();
+			String newFileName= root.path + fileName;
+			Dir.Entry entry = root.list().get(fileName);
+			try {
+				(new File (fsSession, root.path + entry.cryptedName))
+					.save(newFileName);
+				System.out.println("created on " + newFileName);
+			} catch (Exception se) {
+				System.out.println("corrupted file");
+			}
+
+		});
+
 		Button fsBtn = new Button("Consultar arquivos");
 		GridPane.setConstraints(fsBtn, 0, 7);
 		GridPane.setFillWidth  (fsBtn, true);
 		GridPane.setFillHeight (fsBtn, true);
+
+		fsBtn.setOnAction(e -> {
+			try {
+				root = new Dir(fsSession, "./data/Files/");
+				filesList.setItems(
+						FXCollections.observableArrayList(root.asList()));
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				System.out.println("no such directory");
+			}
+		});
 
 		Button exitBtn = new Button("Sair");
 		GridPane.setConstraints(exitBtn, 0, 8);
@@ -140,7 +171,8 @@ public class Main extends Application {
 				acessesLabel, acessesLabel_,
 				sessionBtn, sessionLabel,
 				fsBtn,
-				exitBtn
+				exitBtn,
+				filesList
 				);
 
 		Scene scene = new Scene(grid, 800, 600);

@@ -4,19 +4,20 @@ import java.io.*;
 import java.security.*;
 import java.util.*;
 
-class Dir {
+public class Dir {
+	public String  path;
 	Session s;
 	Map<String, Entry> files;
 
-	class Entry {
-		public String cryptedname;
+	public class Entry {
+		public String cryptedName;
 		public String realName;
 		public String desPassword;
 		public String group;
 
 		public Entry(String s) {
 			String ss[] = s.split(" ");
-			cryptedname = ss[0];
+			cryptedName = ss[0];
 			realName    = ss[1];
 			desPassword = ss[2];
 			group       = ss[3];
@@ -26,7 +27,8 @@ class Dir {
 	public Dir(Session s, String path)
 		throws Exception
 	{
-		files = new HashMap<String, Entry>();
+		this.path  = path;
+		this.files = new HashMap<String, Entry>();
 
 		// TODO: decrypt index and load into Map
 		BufferedReader br = new File(s, path + "index").asBufferedReader();
@@ -43,6 +45,11 @@ class Dir {
 	public Map<String, Dir.Entry> list()
 	{
 		return files;
+	}
+
+	public List<String> asList()
+	{
+		return new ArrayList<String>(files.keySet());
 	}
 
 	public static void main(String args[])

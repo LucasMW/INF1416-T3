@@ -32,6 +32,7 @@ public class SessionForm {
 		window.initModality(Modality.APPLICATION_MODAL);
 		window.setTitle("INF1416:Load Private Key");
 		window.setMinWidth (250);
+		window.setMinHeight(120);
 
 		GridPane grid = new GridPane();
 		grid.setPadding(new Insets(10, 10, 10, 10));
