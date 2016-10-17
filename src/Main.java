@@ -102,7 +102,7 @@ public class Main extends Application {
 			GridPane.setConstraints(newUserBtn, 0, 5);
 			newUserBtn.setOnAction(e -> {
 				db.register(5002,u); //cadastrar usuario
-				User newUser = UserForm.createUser(db);
+				User newUser = UserForm.createUser(db,u);
 				if (newUser != null) {
 					newUser.tanList.saveToFile("./"+newUser.login+"-tan.txt");
 					newUser.store(db.conn());

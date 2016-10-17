@@ -38,7 +38,7 @@ public class UserForm {
 	static boolean certIsValid;
 	static private X509Certificate cert;
 
-	public static User createUser(DB db) {
+	public static User createUser(DB db,User pu) {
 		Stage window = new Stage();
 		window.initModality(Modality.APPLICATION_MODAL);
 		window.setTitle("INF1416:New user");
@@ -142,6 +142,9 @@ public class UserForm {
 			if (file != null) {
 				certInput.setText(""+file);
 			}
+			else{
+				db.register(6003,pu); //invalid path for Certificate
+			}
 		});
 
 		Label createLabel_  = new Label("");
@@ -153,6 +156,7 @@ public class UserForm {
 		GridPane.setConstraints(cancelButton, 1, 6);
 
 		createButton.setOnAction(e -> {
+			db.register(6002,pu); //Cadastrar pressed
 			if (	nameInput    .getText().trim().equals("") ||
 					descLabel    .getText().trim().equals("") ||
 					passInput    .getText().trim().equals("") ||
@@ -184,7 +188,7 @@ public class UserForm {
 						cert = loadCertificate(certFile);
 						//System.out.println(cert);
 
-						if (confirmForm(newUser, cert)) {
+						if (confirmForm(db,newUser, cert)) {
 							newUser.cert = new String(
 									FileHelper.readAllBytes(certFile), "UTF-8");
 							window.close();
@@ -200,6 +204,7 @@ public class UserForm {
 		});
 
 		cancelButton.setOnAction(e -> {
+			db.register(6006,pu); //Voltar pressed
 			newUser = null;
 			window.close();
 		});
@@ -224,12 +229,13 @@ public class UserForm {
 		return newUser;
 	}
 
-	public static boolean confirmForm(User u, X509Certificate cert) {
+	public static boolean confirmForm(DB db,User u, X509Certificate cert) {
 		confirm = false;
 
 		Stage window = new Stage();
 		window.initModality(Modality.APPLICATION_MODAL);
 		window.setTitle("INF1416:Novo Usuario");
+		db.register(6001,u); //new user screen presented
 		window.setMinWidth(800);
 		window.setMinHeight(300);
 
@@ -301,11 +307,13 @@ public class UserForm {
 
 		confirmButton.setOnAction(e -> {
 			confirm = true;
+			db.register(6004,u); //confirm pressed
 			window.close();
 		});
 
 		cancelButton.setOnAction( e -> { window.close();
 			confirm = false;
+			db.register(6005,u);
 			window.close();
 		});
 
