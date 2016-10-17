@@ -86,7 +86,7 @@ public class Main extends Application {
 		Label groupsLabel = new Label("Groups: ");
 		GridPane.setConstraints(groupsLabel, 0, 2);
 
-		Label groupsLabel_ = new Label(u.groupsToString());
+		Label groupsLabel_ = new Label(u.groups.toString());
 		GridPane.setConstraints(groupsLabel_, 1, 2);
 
 		Label acessesLabel = new Label("acessos: ");

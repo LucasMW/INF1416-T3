@@ -12,11 +12,10 @@ public class User {
 	public String   description;
 
 	public String   cert;
-	//public String   privKeyPath;
 
 	public Password password;
 	public TANList  tanList;
-	public Set<String> groups;
+	public Groups   groups;
 
 	public boolean  isAdmin;
 	public int      totalAccesses;
@@ -25,7 +24,6 @@ public class User {
 
 	public User()
 	{
-		groups = new HashSet<String>();
 	}
 
 	public static ResultSet queryByLogin(Connection conn, String login)
@@ -68,7 +66,6 @@ public class User {
 			u.description = rs.getString  ("description");
 
 			u.cert        = rs.getString  ("cert");
-			//u.privKeyPath = rs.getString  ("privKeyPath");
 
 			u.tanList  = new TANList (rs.getString ("tanList"));
 			u.password = new Password(rs.getString ("password"));
@@ -81,7 +78,7 @@ public class User {
 			else            u.blockedUntil = LocalDateTime.now(Clock.systemUTC());
 
 			rs.close();
-			u.loadGroups(conn);
+			u.groups = Groups.fromUserLogin(conn, u.login);
 
 			return u;
 		}
@@ -101,36 +98,27 @@ public class User {
 
 	public void loadGroups(Connection conn)
 	{
-		try {
-			String query = String.format(
-					"select (groups.name)\n"+
-					"from groups\n"+
-					"	join ingroup on groups.id = ingroup.group_id\n"+
-					"	join users   on users.id  = ingroup.user_id\n"+
-					"where users.id=ingroup.user_id and users.login='%s';",
-					login);
+		//try {
+		//	String query = String.format(
+		//			"select (groups.name)\n"+
+		//			"from groups\n"+
+		//			"	join ingroup on groups.id = ingroup.group_id\n"+
+		//			"	join users   on users.id  = ingroup.user_id\n"+
+		//			"where users.id=ingroup.user_id and users.login='%s';",
+		//			login);
 
-			Statement st = conn.createStatement();
-			ResultSet rs = st.executeQuery(query);
+		//	Statement st = conn.createStatement();
+		//	ResultSet rs = st.executeQuery(query);
 
-			while (rs.next()) {
-				groups.add(rs.getString("name"));
-			}
+		//	while (rs.next()) {
+		//		groups.add(rs.getString("name"));
+		//	}
 
-			rs.close();
+		//	rs.close();
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public String groupsToString()
-	{
-		String all = "";
-		for (String s: groups) {
-			all += s + ", ";
-		}
-		return all;
+		//} catch (Exception e) {
+		//	e.printStackTrace();
+		//}
 	}
 
 	public boolean store(Connection conn)
@@ -279,12 +267,12 @@ public class User {
 		u.isAdmin       = false;
 		u.totalAccesses = 0;
 		//u.blockedUntil  = null;
-		System.out.println("groups="+admin.groupsToString());
+		//System.out.println("groups="+admin.groupsToString());
 
 		System.out.println("login="+u.login);
 		System.out.println("name ="+u.name);
 		System.out.println("desc ="+u.description);
-		System.out.println("groups="+u.groupsToString());
+		//System.out.println("groups="+u.groupsToString());
 
 		System.out.println(u.password.verify("BADACA")?"y":"n");
 		System.out.println(u.store(db.conn())?
