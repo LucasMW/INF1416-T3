@@ -133,12 +133,15 @@ public class Main extends Application {
 			String fileName   = filesList.getSelectionModel().getSelectedItem();
 			String newFileName= root.path + fileName;
 			Dir.Entry entry = root.list().get(fileName);
+			db.register(8008,u,fileName); //fileName selected
 			try {
 				(new File (fsSession, root.path + entry.cryptedName))
 					.save(newFileName);
 				System.out.println("created on " + newFileName);
+				db.register(8009,u,fileName); //decripted
 			} catch (Exception se) {
 				System.out.println("corrupted file");
+				db.register(8010,u,fileName); //not decripted
 			}
 		});
 
@@ -151,14 +154,20 @@ public class Main extends Application {
 
 		fsBtn.setOnAction(e -> {
 			db.register(5004,u); //browse files
+			db.register(8001,u); //browsing files screen presented
 			try {
 				root = new Dir(fsSession, fsDirInput.getText());
+				db.register(8003,u); //filesList pressed
 				filesList.setItems(
 						FXCollections.observableArrayList(root.asList()));
+				db.register(8007,u); //filesList presented
+
 			} catch (Exception ex) {
 				System.out.println("no such directory");
+				db.register(8006,u); //invalid path
 				filesList.setItems(null);
 			}
+			db.register(8002,u); //returning to main menu
 		});
 
 		Button exitBtn = new Button("Sair");
