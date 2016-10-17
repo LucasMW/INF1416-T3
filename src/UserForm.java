@@ -35,7 +35,7 @@ public class UserForm {
 	static User newUser;
 	static boolean taken;
 	static boolean confirm;
-	static boolean certIsValid;
+	static boolean certIsValid;          // used for print only
 	static private X509Certificate cert;
 
 	public static User createUser(DB db,User pu) {
@@ -161,8 +161,9 @@ public class UserForm {
 					descLabel    .getText().trim().equals("") ||
 					passInput    .getText().trim().equals("") ||
 					passConfInput.getText().trim().equals("") ||
-					certInput   .getText().trim().equals("") ||
-					loginInput   .getText().trim().equals(""))
+					certInput    .getText().trim().equals("") ||
+					loginInput   .getText().trim().equals("") ||
+					taken)
 			{
 				createLabel_.setText("(x)");
 			} else {
