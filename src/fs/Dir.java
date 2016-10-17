@@ -12,20 +12,20 @@ public class Dir {
 	public class Entry {
 		public String cryptedName;
 		public String realName;
-		public String desPassword;
+		public String userName;
 		public String group;
 
 		public Entry(String s) {
 			String ss[] = s.split(" ");
 			cryptedName = ss[0];
 			realName    = ss[1];
-			desPassword = ss[2];
+			userName    = ss[2];
 			group       = ss[3];
 		}
 
 		public String toString()
 		{
-			return cryptedName+" "+realName+" "+group;
+			return cryptedName+" "+realName+" "+userName+" "+group;
 		}
 	}
 
