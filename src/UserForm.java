@@ -4,6 +4,8 @@ import java.util.*;
 import java.security.*;
 import java.util.*;
 import javafx.beans.value.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
@@ -207,6 +209,11 @@ public class UserForm {
 		Label     descLabel_= new Label(u.description);
 		GridPane.setConstraints(descLabel_, 1, 2);
 
+		ListView<String> filesList = new ListView<String>();
+		GridPane.setConstraints(filesList, 0, 10);
+		filesList.setItems(
+				FXCollections.observableArrayList(u.tanList.getEntries()));
+
 		// certificate info:
 		// Versão, Série, Validade,
 		// Tipo de Assinatura,
@@ -268,7 +275,7 @@ public class UserForm {
 				certSignatureTypeLabel, certSignatureTypeLabel_,
 				certIssuerLabel, certIssuerLabel_,
 				certSubjectLabel, certSubjectLabel_,
-				confirmButton, cancelButton
+				confirmButton, cancelButton, filesList
 				);
 
 		grid.setAlignment(Pos.CENTER);
