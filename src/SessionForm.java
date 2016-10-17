@@ -131,19 +131,19 @@ public class SessionForm {
 			session = new Session(keyFile, password, cert, true);
 			return 0;
 		} catch (javax.crypto.BadPaddingException e) {
-			System.out.println("BadPaddingException");
+			//System.out.println("BadPaddingException");
 			return 1;
 		} catch (InvalidKeySpecException e) {
-			System.out.println("InvalidKeySpecException");
+			//System.out.println("InvalidKeySpecException");
 			return 2;
 		} catch (CertificateException e) {
-			System.out.println("CertificateException");
+			//System.out.println("CertificateException");
 			return 3;
 		} catch (IOException e) {
-			System.out.println("IOException");
+			//System.out.println("IOException");
 			return 4;
 		} catch (java.lang.SecurityException e) {
-			System.out.println("SecurityException");
+			//System.out.println("SecurityException");
 			return 5;
 		}
 	}
