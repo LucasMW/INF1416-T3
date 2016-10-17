@@ -19,18 +19,20 @@ import javafx.stage.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import model.*;
 
 public class SessionForm {
 
 	static String privateKeyFile;
 	static Session session;
 
-	public static Session open(String certificate)
+	public static Session open(String certificate,User u,DB db)
 	{
 
 		Stage window = new Stage();
 		window.initModality(Modality.APPLICATION_MODAL);
 		window.setTitle("INF1416:Load Private Key");
+		db.register(7001,u); // load private key presented
 		window.setMinWidth (250);
 		window.setMinHeight(120);
 
@@ -65,6 +67,8 @@ public class SessionForm {
 				window.close();
 			} else {
 				errorLabel.setText("(key with certificate missmatch)");
+				db.register(7003,u);  //password invalid
+				db.register(7004,u); //missmatch certificate/key
 			}
 		});
 		passwordField.setOnAction(e->btnOk.getOnAction());
@@ -72,6 +76,7 @@ public class SessionForm {
 		btnCancel.setOnAction(e -> {
 			privateKeyFile = null;
 			window.close();
+			db.register(7006,u); //Voltar
 		});
 
 		Button btnLoad = new Button("+");
@@ -85,6 +90,9 @@ public class SessionForm {
 			if (file != null) {
 				fileInput.setText(""+file);
 			}
+			else {
+				db.register(7002,u);  //invalid path
+			}
 		});
 
 		grid.getChildren().addAll(
@@ -96,8 +104,9 @@ public class SessionForm {
 		Scene scene = new Scene(grid);
 		window.setScene(scene);
 		window.showAndWait();
-
+		db.register(7005,u); //verify ok
 		return session;
+
 	}
 
 	static boolean verifySession(String keyFile, String password, String cert) {

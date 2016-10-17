@@ -120,7 +120,7 @@ public class Main extends Application {
 		GridPane.setFillHeight (sessionBtn, true);
 		sessionBtn.setOnAction(e -> {
 			db.register(5003,u); //load private key
-			fsSession = SessionForm.open(u.cert);
+			fsSession = SessionForm.open(u.cert,u,db);
 			if (fsSession != null) {
 				sessionLabel.setText("loaded");
 			}
