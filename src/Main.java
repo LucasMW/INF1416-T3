@@ -127,11 +127,13 @@ public class Main extends Application {
 		});
 
 
-		ListView<String> filesList = new ListView<String>();
+		ListView<Dir.Entry> filesList = new ListView<Dir.Entry>();
 		GridPane.setConstraints(filesList, 1, 9);
 		filesList.setOnMouseClicked(e -> {
 
-			String fileName   = filesList.getSelectionModel().getSelectedItem();
+			Dir.Entry fileEntry = filesList.getSelectionModel().getSelectedItem();
+			String fileName     = fileEntry.realName;
+			System.out.println(fileName);
 			String newFileName= root.path + fileName;
 			Dir.Entry entry = root.list().get(fileName);
 			db.register(8008,u,fileName); //fileName selected

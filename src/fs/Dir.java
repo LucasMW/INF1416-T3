@@ -52,16 +52,9 @@ public class Dir {
 		return files;
 	}
 
-	public List<String> asList()
+	public List<Dir.Entry> asList()
 	{
-		//List<String> allEntries = new ArrayList<String>();
-
-		//for (Map.Entry<String, Entry> file: files.entrySet()) {
-		//	allEntries.add(file.toString());
-
-		//}
-		//return allEntries;
-		return new ArrayList<String>(files.keySet());
+		return new ArrayList<Dir.Entry>(files.values());
 	}
 
 	public static void main(String args[])
