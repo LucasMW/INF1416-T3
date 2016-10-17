@@ -1,6 +1,7 @@
 package model;
 import java.sql.*;
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 public class DB {
 
 	Connection conn=null;
@@ -84,6 +85,63 @@ public class DB {
 		} catch (Exception e) {
 			System.out.println("could not make registry");
 		}
+	}
+
+	public String[] UserLoginNames() {
+		String query = String.format("select id,login from USERS");
+		String[] array = new String[count("USERS")];
+		try {
+
+			Statement st = conn.createStatement();
+			ResultSet rs = st.executeQuery(query);
+			int usrId =  rs.getInt("id");
+			array[usrId] = rs.getString("login");
+			return array;
+		}
+		catch(Exception e)
+		{
+			return null;
+		}
+	}
+	public void viewRegistry()
+	{
+		String[] logins = UserLoginNames();
+		try {
+			String query = String.format("select * from messages join registers on messages.id = registers.msg_id ORDER BY time;");
+
+			Statement st = conn.createStatement();
+			ResultSet rs = st.executeQuery(query);
+			while(rs.next())
+			{
+				String message = rs.getString(2);
+				int msg_type = rs.getInt(1);
+				int regid = rs.getInt(3);
+				int userId = rs.getInt(4);
+				String date = rs.getString("time");
+				Pattern pattern = Pattern.compile("([%][s])"); //case insensitive, use [g] for only lower
+				Matcher matcher = pattern.matcher(message);
+				int count = 0;
+				while (matcher.find()) {
+					count++;
+				}
+				System.out.println(count);
+				if(count == 1)
+				{
+					message = String.format(message,logins[userId]);
+				}
+				else if(count == 2)
+				{
+					String filename = rs.getString("file_name");
+					message = String.format(message,logins[userId]);
+				}
+				System.out.println(String.format("%d: %s",regid,message));
+		 	}
+			rs.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	public static void main(String args[]) {
