@@ -1,14 +1,14 @@
 import java.io.*;
-import javafx.beans.value.*;
-import javafx.stage.*;
-import javafx.scene.*;
-import javafx.scene.layout.*;
-import javafx.scene.control.*;
-import javafx.geometry.*;
+import java.util.*;
 
-import java.io.*;
 import java.security.*;
 import java.util.*;
+import javafx.beans.value.*;
+import javafx.geometry.*;
+import javafx.scene.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
 import javax.crypto.*;
 import javax.security.cert.*; // using java.security.cert.* fails to compile
 
@@ -286,15 +286,10 @@ public class UserForm {
 		sylabs[0] = password.substring(0, 2);
 		sylabs[1] = password.substring(2, 4);
 		sylabs[2] = password.substring(4, 6);
+		List<String> phonList = new ArrayList<String>(Arrays.asList(Login.phonems));
 		for(String s: sylabs)
-			System.out.println(s);
-		for(String s: sylabs)
-			if(s.length() !=2 )
-			{
-				System.out.println(s);
-				System.out.println("ERROR");
+			if(!phonList.contains(s))
 				return false;
-			}
 		if(sylabs.length != 3)
 		{
 			System.out.println("SERIOUS ERROR");
