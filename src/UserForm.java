@@ -226,8 +226,6 @@ public class UserForm {
 		sylabs[1] = password.substring(2, 4);
 		sylabs[2] = password.substring(4, 6);
 		for(String s: sylabs)
-			System.out.println(s);
-		for(String s: sylabs)
 			if(s.length() !=2 )
 			{
 				System.out.println(s);
