@@ -49,13 +49,13 @@ public class Login {
 			u = User.byLogin(db.conn(), loginInput.getText());
 			if (u == null) {
 				errorLabel.setText("(no such user)");
-				db.register(2005); //no such user
+				db.register(2005,u); //no such user
 			} else if (u.isBlocked()) {
 				errorLabel.setText("(user is blocked)");
-				db.register(2004); //user blocked
+				db.register(2004,u); //user blocked
 			} else {
 				window.close();
-				db.register(2003); //user ok
+				db.register(2003,u); //user ok
 			}
 		});
 
@@ -84,6 +84,7 @@ public class Login {
 		window.initModality(Modality.APPLICATION_MODAL);
 		window.setTitle("INF1416:Password (Etapa 2)");
 		window.setMinWidth(250);
+		db.register(3001,u); //etapa2 iniciada
 
 		GridPane grid = new GridPane();
 		grid.setPadding(new Insets(10, 10, 10, 10));
@@ -112,16 +113,20 @@ public class Login {
 				if (clicks.size() > 2) {
 					if (verifyCombinations(clicks, "", 0)) {
 						validPassword = true;
+						db.register(3003,u); //correct
 						window.close();
 					} else {
+						db.register(3005+numTries,u); // +0, +1, +2
 						numTries++;
 						nLabel.setText("(incorrect)");
 						clicks.clear();
+						db.register(3004,u); //incorrect 
 					}
 				}
 
 				if (numTries == 3) {
 					u.block(db.conn());
+					db.register(3008,u);
 					window.close();
 				}
 
@@ -133,6 +138,7 @@ public class Login {
 		window.setScene(scene);
 		window.showAndWait();
 
+		db.register(3002,u); //fim etapa2
 		return validPassword;
 	}
 
