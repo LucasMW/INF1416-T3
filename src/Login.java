@@ -29,6 +29,7 @@ public class Login {
 		window.initModality(Modality.APPLICATION_MODAL);
 		window.setTitle("INF1416:Login (Etapa 1)");
 		window.setMinWidth(250);
+		window.setMinHeight(75);
 
 		db.register(2001); //início da etapa 1
 		GridPane grid = new GridPane();
@@ -81,9 +82,11 @@ public class Login {
 		clicks = new ArrayList<String[]>();
 
 		Stage window = new Stage();
+		window.setMinWidth(400);
+		window.setMinWidth(250);
+
 		window.initModality(Modality.APPLICATION_MODAL);
 		window.setTitle("INF1416:Password (Etapa 2)");
-		window.setMinWidth(250);
 		db.register(3001,u); //etapa2 iniciada
 
 		GridPane grid = new GridPane();

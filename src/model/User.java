@@ -71,7 +71,6 @@ public class User {
 			u.password = new Password(rs.getString ("password"));
 
 			u.totalAccesses = rs.getInt   ("totalAccesses");
-			u.isAdmin       = rs.getInt   ("isAdmin") != 0 ? true : false;
 
 			String ts       = rs.getString("blockedUntil");
 			if (ts != null) u.blockedUntil = LocalDateTime.parse(ts);
@@ -79,6 +78,7 @@ public class User {
 
 			rs.close();
 			u.groups = Groups.fromUserLogin(conn, u.login);
+			u.isAdmin = u.groups.get("admin") != null ? true:false;
 
 			return u;
 		}
@@ -128,7 +128,7 @@ public class User {
 
 		String query =
 			"insert into users "+
-			"(login, name, description, cert, password, tanList, isAdmin) "+
+			"(login, name, description, cert, password, tanList) "+
 			"values "+
 			String.format(
 					"('%s', '%s', '%s', '%s', '%s', '%s', %d);",
@@ -137,16 +137,40 @@ public class User {
 					description,
 					cert,
 					password.marshal(),
-					tanList.marshal(),
-					isAdmin?1:0);
+					tanList.marshal());
 
 		try {
 		  Statement stmt = conn.createStatement();
 		  stmt.executeUpdate(query);
+		  storeMyGroupsByLogin(conn);
 		  return true;
 		} catch (Exception e) {
 			System.out.println("ERROR: sql insert");
 			return false;
+		}
+
+	}
+
+	public void storeMyGroupsByLogin(Connection conn)
+	{
+		try {
+			Statement stmt = conn.createStatement();
+
+			for (Map.Entry<String, Groups.Group> entry: groups.groups.entrySet()) {
+				Groups.Group group = entry.getValue();
+				String query =
+					"insert into ingroup (user_id, group_id)\n"+
+					"	select users.id, groups.id\n"+
+					"	from users join groups on\n"+
+					String.format("users.login='%s' and groups.id = %d;\n",
+							login,
+							group.id);
+
+				stmt.executeUpdate(query);
+				System.out.println(query);
+			}
+		} catch (Exception e) {
+			System.out.println("ERROR: sql groups store");
 		}
 	}
 

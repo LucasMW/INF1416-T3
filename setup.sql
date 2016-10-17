@@ -13,7 +13,6 @@ create table users (
 	password      char(127)       not null,
 	tanList       char(127)       not null,
 
-	isAdmin       boolean         not null,
 	totalAccesses integer,
 	blockedUntil  char(32) -- problems with java select, store as string
 );
@@ -93,7 +92,6 @@ x+yh0/gsP/raRytMjOBjSsNAqvloMWQk3SbRyZk5mZ9Zo22RvxtT/vAAiwM=
 	"a3024da4c60f087128a545957cb40c5d|000000000",
 	"I2RR|AMSG|WTPU|0BHQ|TUY4|LI28|OCLE|UI16|F3PG|00MF|#8|6|0|3|9|4|5|1|2|7|",
 
-	1,
 	0,
 	null
 );
