@@ -68,6 +68,11 @@ public class TANList extends SecureRandom {
 		}
 	}
 
+	public String[] getEntries()
+	{
+		return entries;
+	}
+
 	// util -------------------------------------------------------------------
 	public String marshal()
 	{

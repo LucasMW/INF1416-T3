@@ -140,13 +140,14 @@ public class User {
 
 		String query =
 			"insert into users "+
-			"(login, name, description, password, tanList, isAdmin) "+
+			"(login, name, description, cert, password, tanList, isAdmin) "+
 			"values "+
 			String.format(
-					"('%s', '%s', '%s', '%s', '%s', %d);",
+					"('%s', '%s', '%s', '%s', '%s', '%s', %d);",
 					login,
 					name,
 					description,
+					cert,
 					password.marshal(),
 					tanList.marshal(),
 					isAdmin?1:0);

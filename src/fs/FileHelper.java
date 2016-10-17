@@ -3,7 +3,7 @@ package fs;
 import java.io.*;
 import javax.crypto.*;
 
-class FileHelper {
+public class FileHelper {
 	private FileInputStream   fis = null;
 	private CipherInputStream cis = null;
 	private InputStreamReader isr = null;
