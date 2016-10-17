@@ -124,7 +124,6 @@ public class DB {
 				while (matcher.find()) {
 					count++;
 				}
-				System.out.println(count);
 				if(count == 1)
 				{
 					message = String.format(message,logins[userId]);
