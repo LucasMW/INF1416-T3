@@ -50,6 +50,7 @@ public class Main extends Application {
 		} while (!Login.validateTANEntry(db, u));
 		//u = User.byLogin(db.conn(), "asdf");
 		//u = User.byLogin(db.conn(), "admin");
+		//u = User.byLogin(db.conn(), "user03");
 		u.totalAccesses++;
 
 		// main menu
@@ -127,7 +128,7 @@ public class Main extends Application {
 
 
 		ListView<String> filesList = new ListView<String>();
-		GridPane.setConstraints(filesList, 0, 9);
+		GridPane.setConstraints(filesList, 1, 9);
 		filesList.setOnMouseClicked(e -> {
 
 			String fileName   = filesList.getSelectionModel().getSelectedItem();

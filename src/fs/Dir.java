@@ -22,6 +22,11 @@ public class Dir {
 			desPassword = ss[2];
 			group       = ss[3];
 		}
+
+		public String toString()
+		{
+			return cryptedName+" "+realName+" "+group;
+		}
 	}
 
 	public Dir(Session s, String path)
@@ -49,6 +54,13 @@ public class Dir {
 
 	public List<String> asList()
 	{
+		//List<String> allEntries = new ArrayList<String>();
+
+		//for (Map.Entry<String, Entry> file: files.entrySet()) {
+		//	allEntries.add(file.toString());
+
+		//}
+		//return allEntries;
 		return new ArrayList<String>(files.keySet());
 	}
 

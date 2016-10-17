@@ -115,13 +115,13 @@ public class UserForm {
 
 
 		Label     passLabel = new Label("Senha:");
-		TextField passInput = new TextField();
+		PasswordField passInput = new PasswordField();
 		GridPane.setConstraints(passLabel, 0, 3);
 		GridPane.setConstraints(passInput, 1, 3);
 
 		Label passConfLabel     = new Label("Confirma:");
 		Label passConfLabel_    = new Label("");
-		TextField passConfInput = new TextField();
+		PasswordField passConfInput = new PasswordField();
 		GridPane.setConstraints(passConfLabel,  0, 4);
 		GridPane.setConstraints(passConfInput,  1, 4);
 		GridPane.setConstraints(passConfLabel_, 2, 4);
