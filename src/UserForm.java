@@ -7,7 +7,7 @@ import javafx.scene.control.*;
 import javafx.geometry.*;
 
 import model.*;
-
+import java.util.*;
 public class UserForm {
 
 	//Create variable
@@ -225,13 +225,10 @@ public class UserForm {
 		sylabs[0] = password.substring(0, 2);
 		sylabs[1] = password.substring(2, 4);
 		sylabs[2] = password.substring(4, 6);
+		List<String> phonList = new ArrayList<String>(Arrays.asList(Login.phonems));
 		for(String s: sylabs)
-			if(s.length() !=2 )
-			{
-				System.out.println(s);
-				System.out.println("ERROR");
+			if(!phonList.contains(s))
 				return false;
-			}
 		if(sylabs.length != 3)
 		{
 			System.out.println("SERIOUS ERROR");
