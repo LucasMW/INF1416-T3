@@ -200,6 +200,7 @@ create table registers (
 	user_id    integer,
 	msg_id     integer              not null,
 	time       date,
+	file_name  char(255),
 
 	foreign key(user_id) references users   (id)
 	foreign key(msg_id)  references messages(id)

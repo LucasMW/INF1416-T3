@@ -48,6 +48,19 @@ public class DB {
 
 		return -1;
 	}
+	public void register(int msg_id,User u,String filename)
+	{
+		try {
+			String query = String.format("insert into registers (user_id,msg_id,time,file_name) values (%d,%d,datetime('now'),%s);",
+			u.id,msg_id,filename);
+
+			Statement st = conn.createStatement();
+			st.executeUpdate(query);
+		} catch (Exception e) {
+			System.out.println("could not make registry!");
+			//e.printStackTrace();
+		}
+	}
 	public void register(int msg_id,User u)
 	{
 		try {
