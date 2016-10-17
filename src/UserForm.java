@@ -6,7 +6,14 @@ import javafx.scene.layout.*;
 import javafx.scene.control.*;
 import javafx.geometry.*;
 
+import java.io.*;
+import java.security.*;
+import java.util.*;
+import javax.crypto.*;
+import javax.security.cert.*; // using java.security.cert.* fails to compile
+
 import model.*;
+import fs.*;
 
 public class UserForm {
 
@@ -14,6 +21,8 @@ public class UserForm {
 	static User newUser;
 	static boolean taken;
 	static boolean confirm;
+	static boolean certIsValid;
+	static private X509Certificate cert;
 
 	public static User createUser(DB db) {
 		Stage window = new Stage();
@@ -83,7 +92,7 @@ public class UserForm {
 			FileChooser.ExtensionFilter extFilter =
 				new FileChooser.ExtensionFilter("Certificate (*.crt)", "*.crt");
 			fileChooser.getExtensionFilters().add(extFilter);
-			File file = fileChooser.showOpenDialog(window);
+			java.io.File file = fileChooser.showOpenDialog(window);
 			if (file != null) {
 				certInput.setText(""+file);
 			}
@@ -121,10 +130,20 @@ public class UserForm {
 					newUser.password    = Password.newPassword(pass);
 					newUser.tanList     = new TANList();
 
-					if (confirmForm(newUser)) {
-						window.close();
+					try {
+						String certFile = certInput.getText();
+						cert = loadCertificate(certFile);
+						//System.out.println(cert);
 
+						if (confirmForm(newUser, cert)) {
+							newUser.cert = new String(
+									FileHelper.readAllBytes(certFile), "UTF-8");
+							window.close();
+						}
+					} catch (Exception ex) {
+						ex.printStackTrace();
 					}
+
 				} else {
 					passConfLabel_.setText("(missmatch)");
 				}
@@ -156,14 +175,14 @@ public class UserForm {
 		return newUser;
 	}
 
-	public static boolean confirmForm(User u) {
+	public static boolean confirmForm(User u, X509Certificate cert) {
 		confirm = false;
 
 		Stage window = new Stage();
 		window.initModality(Modality.APPLICATION_MODAL);
 		window.setTitle("INF1416:Novo Usuario");
-		window.setMinWidth(300);
-		window.setMinHeight(250);
+		window.setMinWidth(800);
+		window.setMinHeight(300);
 
 		GridPane grid = new GridPane();
 		grid.setPadding(new Insets(10, 10, 10, 10));
@@ -188,10 +207,46 @@ public class UserForm {
 		Label     descLabel_= new Label(u.description);
 		GridPane.setConstraints(descLabel_, 1, 2);
 
+		// certificate info:
+		// Versão, Série, Validade,
+		// Tipo de Assinatura,
+		// Emissor e Sujeito (Friendly Name)
+
+		Label certVersionLabel = new Label("Versão:");
+		Label certVersionLabel_= new Label(""+cert.getVersion());
+		GridPane.setConstraints(certVersionLabel, 0, 3);
+		GridPane.setConstraints(certVersionLabel_, 1, 3);
+
+		Label certSerialLabel = new Label("Série:");
+		Label certSerialLabel_= new Label(""+cert.getVersion());
+		GridPane.setConstraints(certSerialLabel,  0, 4);
+		GridPane.setConstraints(certSerialLabel_, 1, 4);
+
+		Label certValidityLabel = new Label("Validade:");
+		Label certValidityLabel_= new Label(certIsValid? "válido" : "inválido");
+		GridPane.setConstraints(certValidityLabel,  0, 5);
+		GridPane.setConstraints(certValidityLabel_, 1, 5);
+
+		Label certSignatureTypeLabel = new Label("Tipo de Assinatura:");
+		Label certSignatureTypeLabel_= new Label(cert.getSigAlgName());
+		GridPane.setConstraints(certSignatureTypeLabel,  0, 6);
+		GridPane.setConstraints(certSignatureTypeLabel_, 1, 6);
+
+		Label certIssuerLabel = new Label("Emissor:");
+		Label certIssuerLabel_= new Label(cert.getIssuerDN().getName());
+		GridPane.setConstraints(certIssuerLabel,  0, 7);
+		GridPane.setConstraints(certIssuerLabel_, 1, 7);
+
+		Label certSubjectLabel = new Label("Nome:");
+		Label certSubjectLabel_= new Label(cert.getSubjectDN().getName());
+		GridPane.setConstraints(certSubjectLabel,  0, 8);
+		GridPane.setConstraints(certSubjectLabel_, 1, 8);
+
+
 		Button confirmButton = new Button("Confirmar");
 		Button cancelButton  = new Button("Cancelar");
-		GridPane.setConstraints(confirmButton, 0, 5);
-		GridPane.setConstraints(cancelButton,  1, 5);
+		GridPane.setConstraints(confirmButton, 0, 9);
+		GridPane.setConstraints(cancelButton,  1, 9);
 
 		confirmButton.setOnAction(e -> {
 			confirm = true;
@@ -207,6 +262,12 @@ public class UserForm {
 				nameLabel, nameLabel_,
 				loginLabel, loginLabel_,
 				descLabel, descLabel_,
+				certVersionLabel, certVersionLabel_,
+				certSerialLabel, certSerialLabel_,
+				certValidityLabel, certValidityLabel_,
+				certSignatureTypeLabel, certSignatureTypeLabel_,
+				certIssuerLabel, certIssuerLabel_,
+				certSubjectLabel, certSubjectLabel_,
 				confirmButton, cancelButton
 				);
 
@@ -247,5 +308,23 @@ public class UserForm {
 		return true;
 	}
 
+	private static X509Certificate loadCertificate(String certFile)
+	{
+		X509Certificate cert_ = null;
 
+		try {
+			InputStream in = new FileInputStream(certFile);
+			cert_ = X509Certificate.getInstance(in);
+			in.close();
+
+			cert_.checkValidity(); // <- expirado
+			certIsValid = true;
+		} catch (CertificateExpiredException e) {
+			certIsValid = false;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return cert_;
+	}
 }
