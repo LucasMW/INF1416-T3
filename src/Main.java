@@ -141,17 +141,19 @@ public class Main extends Application {
 
 		Button fsBtn = new Button("Consultar arquivos");
 		GridPane.setConstraints(fsBtn, 0, 7);
-		GridPane.setFillWidth  (fsBtn, true);
-		GridPane.setFillHeight (fsBtn, true);
+
+		TextField fsDirInput = new TextField();
+		GridPane.setConstraints(fsDirInput, 1, 7);
+		fsDirInput.setText("./data/Files/");
 
 		fsBtn.setOnAction(e -> {
 			try {
-				root = new Dir(fsSession, "./data/Files/");
+				root = new Dir(fsSession, fsDirInput.getText());
 				filesList.setItems(
 						FXCollections.observableArrayList(root.asList()));
 			} catch (Exception ex) {
-				ex.printStackTrace();
 				System.out.println("no such directory");
+				filesList.setItems(null);
 			}
 		});
 
@@ -170,7 +172,7 @@ public class Main extends Application {
 				groupsLabel, groupsLabel_,
 				acessesLabel, acessesLabel_,
 				sessionBtn, sessionLabel,
-				fsBtn,
+				fsBtn, fsDirInput,
 				exitBtn,
 				filesList
 				);
