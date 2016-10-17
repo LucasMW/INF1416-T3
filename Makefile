@@ -7,3 +7,5 @@ main.db:
 clean:
 	rm -rf bin/
 	mkdir bin
+cleandb:
+	rm main.db
