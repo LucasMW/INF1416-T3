@@ -50,6 +50,7 @@ public class Main extends Application {
 		//} while (!Login.validateTANEntry(db, u));
 		//u = User.byLogin(db.conn(), "asdf");
 		u = User.byLogin(db.conn(), "admin");
+		db.register(5001,u); //presented mainScreen
 		u.totalAccesses++;
 
 		// main menu
@@ -100,10 +101,12 @@ public class Main extends Application {
 			newUserBtn = new Button("Cadastrar usuario");
 			GridPane.setConstraints(newUserBtn, 0, 5);
 			newUserBtn.setOnAction(e -> {
+				db.register(5002,u); //cadastrar usuario
 				User newUser = UserForm.createUser(db);
 				if (newUser != null) {
 					newUser.tanList.saveToFile("./"+newUser.login+"-tan.txt");
 					newUser.store(db.conn());
+
 				}
 			});
 			grid.getChildren().addAll(newUserBtn);
@@ -116,6 +119,7 @@ public class Main extends Application {
 		GridPane.setFillWidth  (sessionBtn, true);
 		GridPane.setFillHeight (sessionBtn, true);
 		sessionBtn.setOnAction(e -> {
+			db.register(5003,u); //load private key
 			fsSession = SessionForm.open(u.cert);
 			if (fsSession != null) {
 				sessionLabel.setText("loaded");
@@ -147,6 +151,7 @@ public class Main extends Application {
 		fsDirInput.setText("./data/Files/");
 
 		fsBtn.setOnAction(e -> {
+			db.register(5004,u); //browse files
 			try {
 				root = new Dir(fsSession, fsDirInput.getText());
 				filesList.setItems(
@@ -162,6 +167,7 @@ public class Main extends Application {
 		GridPane.setFillWidth  (exitBtn, true);
 		GridPane.setFillHeight (exitBtn, true);
 		exitBtn.setOnAction(e -> {
+			db.register(5005,u); //exit
 			closeWindow();
 			window.close();
 		});
