@@ -133,7 +133,7 @@ public class DB {
 					String filename = rs.getString("file_name");
 					message = String.format(message,logins[userId]);
 				}
-				System.out.println(String.format("%d: %s",regid,message));
+				System.out.println(String.format("%d: %s %s",regid,message,date));
 		 	}
 			rs.close();
 
