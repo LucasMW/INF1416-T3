@@ -47,7 +47,10 @@ public class Session {
 		in.close();
 
 		make(key, cert);
-		cert.checkValidity(); // <- expirado
+		try {
+			cert.checkValidity(); // <- expirado
+		} catch (Exception e) {
+		}
 	}
 
 	static boolean keysFormAPair(PrivateKey key, PublicKey pub)
