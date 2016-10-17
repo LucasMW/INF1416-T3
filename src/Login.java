@@ -30,6 +30,7 @@ public class Login {
 		window.setTitle("INF1416:Login (Etapa 1)");
 		window.setMinWidth(250);
 
+		db.register(2001); //início da etapa 1
 		GridPane grid = new GridPane();
 		grid.setPadding(new Insets(10, 10, 10, 10));
 		grid.setVgap(8);
@@ -48,10 +49,13 @@ public class Login {
 			u = User.byLogin(db.conn(), loginInput.getText());
 			if (u == null) {
 				errorLabel.setText("(no such user)");
+				db.register(2005); //no such user
 			} else if (u.isBlocked()) {
 				errorLabel.setText("(user is blocked)");
+				db.register(2004); //user blocked
 			} else {
 				window.close();
+				db.register(2003); //user ok
 			}
 		});
 
@@ -64,6 +68,7 @@ public class Login {
 				loginInput, loginButton, errorLabel);
 		Scene scene = new Scene(grid, 800, 600);
 		window.setScene(scene);
+		db.register(2002); //fim da etapa 1
 		window.showAndWait();
 
 		return u;
