@@ -167,7 +167,7 @@ insert into messages values (5003, "Opção 2 do menu principal selecionada por 
 insert into messages values (5004, "Opção 3 do menu principal selecionada por %s."); -- login_name
 insert into messages values (5005, "Opção 4 do menu principal selecionada por %s."); -- login_name
 insert into messages values (6001, "Tela de cadastro apresentada para %s."); -- login_name
-insert into messages values (6002, "Botão ca dastrar pressionado por %s."); -- login_name
+insert into messages values (6002, "Botão cadastrar pressionado por %s."); -- login_name
 insert into messages values (6003, "Caminho do certificado digital inválido fornecido por %s."); -- login_name
 insert into messages values (6004, "Confirmação de dados aceita por %s."); -- login_name
 insert into messages values (6005, "Confirmação de dados rejeitada por %s."); -- login_name

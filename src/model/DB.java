@@ -79,7 +79,6 @@ public class DB {
 	{
 		try {
 			String query = String.format("insert into registers (msg_id,time) values (%d,datetime('now'));",msg_id);
-
 			Statement st = conn.createStatement();
 			st.executeUpdate(query);
 		} catch (Exception e) {
