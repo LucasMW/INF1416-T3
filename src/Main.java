@@ -39,6 +39,7 @@ public class Main extends Application {
 		db     = new DB();
 		db.connect("main.db");
 
+		db.register(1001); //system started
 		window = primaryStage;
 		window.setTitle("INF1416");
 
@@ -182,6 +183,7 @@ public class Main extends Application {
 	private void closeWindow() {
 		u.updateTotalAccesses(db.conn());
 		System.out.println("done");
+		db.register(1002); //system closed
 		//window.close();
 	}
 }

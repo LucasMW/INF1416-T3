@@ -48,6 +48,31 @@ public class DB {
 
 		return -1;
 	}
+	public void register(int msg_id,User u)
+	{
+		try {
+			String query = String.format("insert into registers (user_id,msg_id,time) values (%d,%d,datetime('now'));",
+			u.id,msg_id);
+
+			Statement st = conn.createStatement();
+			st.executeUpdate(query);
+		} catch (Exception e) {
+			System.out.println("could not make registry!");
+			//e.printStackTrace();
+		}
+	}
+	//simple messages
+	public void register(int msg_id)
+	{
+		try {
+			String query = String.format("insert into registers (msg_id,time) values (%d,datetime('now'));",msg_id);
+
+			Statement st = conn.createStatement();
+			st.executeUpdate(query);
+		} catch (Exception e) {
+			System.out.println("could not make registry");
+		}
+	}
 
 	public static void main(String args[]) {
 		DB db = new DB();
