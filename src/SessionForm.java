@@ -1,6 +1,5 @@
-import fs.Session;
 
-import java.io.File;
+import java.io.*;
 /*from  w  w  w  .  j  ava2s .com*/
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -19,6 +18,10 @@ import javafx.stage.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.security.spec.InvalidKeySpecException;
+import javax.security.cert.*; // using java.security.cert.* fails to compile
+
+import fs.Session;
 import model.*;
 
 public class SessionForm {
@@ -61,14 +64,31 @@ public class SessionForm {
 
 		btnOk.setOnAction(e -> {
 			privateKeyFile = fileInput.getText();
-			if (verifySession(privateKeyFile,
+			int r = verifySession(privateKeyFile,
 						passwordField.getText(),
-						certificate)) {
-				window.close();
-			} else {
-				errorLabel.setText("(key with certificate missmatch)");
-				db.register(7003,u);  //password invalid
-				db.register(7004,u); //missmatch certificate/key
+						certificate);
+			System.out.println(r);
+			switch (r) {
+				case 0:
+				case 3:
+					window.close();
+					break;
+				case 1:
+				case 5:
+					db.register(7004,u); //missmatch certificate/key
+					errorLabel.setText("(certificate/key missmatch)");
+					break;
+				case 2:
+					db.register(7003,u);  //password invalid
+					errorLabel.setText("(invalid password)");
+					break;
+				case 4:
+					db.register(7002,u);  //invalid path
+					errorLabel.setText("(no such file)");
+					break;
+				default:
+					errorLabel.setText("(problems)");
+					break;
 			}
 		});
 		passwordField.setOnAction(e->btnOk.getOnAction());
@@ -90,9 +110,6 @@ public class SessionForm {
 			if (file != null) {
 				fileInput.setText(""+file);
 			}
-			else {
-				db.register(7002,u);  //invalid path
-			}
 		});
 
 		grid.getChildren().addAll(
@@ -109,12 +126,25 @@ public class SessionForm {
 
 	}
 
-	static boolean verifySession(String keyFile, String password, String cert) {
+	static int verifySession(String keyFile, String password, String cert) {
 		try {
 			session = new Session(keyFile, password, cert, true);
-			return true;
-		} catch (Exception e) {
-			return false;
+			return 0;
+		} catch (javax.crypto.BadPaddingException e) {
+			System.out.println("BadPaddingException");
+			return 1;
+		} catch (InvalidKeySpecException e) {
+			System.out.println("InvalidKeySpecException");
+			return 2;
+		} catch (CertificateException e) {
+			System.out.println("CertificateException");
+			return 3;
+		} catch (IOException e) {
+			System.out.println("IOException");
+			return 4;
+		} catch (java.lang.SecurityException e) {
+			System.out.println("SecurityException");
+			return 5;
 		}
 	}
 }

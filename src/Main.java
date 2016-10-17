@@ -43,12 +43,12 @@ public class Main extends Application {
 		window = primaryStage;
 		window.setTitle("INF1416");
 
-		do {
-			do {
-				u = Login.getUser(db);
-			} while (!Login.validatePassword(db, u));
-		} while (!Login.validateTANEntry(db, u));
-		//u = User.byLogin(db.conn(), "asdf");
+		//do {
+		//	do {
+		//		u = Login.getUser(db);
+		//	} while (!Login.validatePassword(db, u));
+		//} while (!Login.validateTANEntry(db, u));
+		u = User.byLogin(db.conn(), "asdf");
 		//u = User.byLogin(db.conn(), "admin");
 		u.totalAccesses++;
 

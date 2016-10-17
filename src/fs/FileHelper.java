@@ -10,7 +10,7 @@ public class FileHelper {
 	public  BufferedReader     br = null;
 
 	public FileHelper(String file, Cipher cipher)
-		throws Exception
+		throws IOException
 	{
 		fis = new FileInputStream(file);
 		cis = new CipherInputStream(fis, cipher);
@@ -72,7 +72,7 @@ public class FileHelper {
 	//}
 
 	public void close()
-		throws Exception
+		throws IOException
 	{
 		fis.close();
 		cis.close();

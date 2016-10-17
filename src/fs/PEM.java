@@ -17,23 +17,34 @@ class PEM {
 	static final String PEM_PRIVATE_END   = "-----END PRIVATE KEY-----";
 
 	public static PrivateKey readPrivateKey(BufferedReader br)
-		throws Exception
+		throws javax.crypto.BadPaddingException, InvalidKeySpecException,
+						  IOException
 	{
 		String b64 = "",
 			   line= "";
 
-		while ((line=br.readLine()) != null) {
-			if (line.equals(PEM_PRIVATE_START)) { break; }
+		try {
+			while ((line=br.readLine()) != null) {
+				if (line.equals(PEM_PRIVATE_START)) { break; }
+			}
+			while ((line=br.readLine()) != null) {
+				if (line.equals(PEM_PRIVATE_END))   { break; }
+				b64 += line;
+			}
+		} catch (java.io.IOException e) {
+			throw new InvalidKeySpecException("Failed to decode PEM");
 		}
-		while ((line=br.readLine()) != null) {
-			if (line.equals(PEM_PRIVATE_END))   { break; }
-			b64 += line;
-		}
+
+		KeyFactory kf = null;
+
+		try {
+			kf = KeyFactory.getInstance("RSA");
+		} catch (Exception e) {}
 
 		//System.out.print(b64);
 		PKCS8EncodedKeySpec pkcs8 = new PKCS8EncodedKeySpec(
 				java.util.Base64.getDecoder().decode(b64));
-		return KeyFactory.getInstance("RSA").generatePrivate(pkcs8);
+		return kf.generatePrivate(pkcs8);
 	}
 
 	public static void main(String args[])

@@ -2,9 +2,14 @@ package fs;
 
 import java.io.*;
 import java.security.*;
+import java.security.spec.*;
 import java.util.*;
+import java.util.Base64.Decoder;
 import javax.crypto.*;
+import javax.crypto.spec.*;
+import javax.crypto.spec.DESKeySpec;
 import javax.security.cert.*; // using java.security.cert.* fails to compile
+import java.security.spec.PKCS8EncodedKeySpec;
 
 public class Session {
 	public  PrivateKey      key;
@@ -12,7 +17,6 @@ public class Session {
 	private X509Certificate cert;
 
 	boolean make(PrivateKey key, X509Certificate cert)
-		throws Exception
 	{
 		PublicKey pub = cert.getPublicKey();
 
@@ -27,7 +31,8 @@ public class Session {
 	}
 
 	public Session(String file, String pass, String certFile, boolean inMemory)
-		throws Exception
+		throws javax.crypto.BadPaddingException, InvalidKeySpecException,
+						  CertificateException, IOException
 	{
 		FileHelper f = new FileHelper(file, Util.DESCipher(pass));
 		key = PEM.readPrivateKey(f.br);
@@ -41,27 +46,32 @@ public class Session {
 		cert = X509Certificate.getInstance(in);
 		in.close();
 
-		// TODO: validate cert
-		//cert.checkValidity(); // <- expirado
-
 		make(key, cert);
+		cert.checkValidity(); // <- expirado
 	}
 
 	static boolean keysFormAPair(PrivateKey key, PublicKey pub)
-		throws Exception
 	{
 		byte[] challenge = new byte[64];
 
-		Cipher pubCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-		Cipher keyCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+		try {
+			Cipher pubCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+			Cipher keyCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 
-		pubCipher.init(Cipher.ENCRYPT_MODE, pub);
-		keyCipher.init(Cipher.DECRYPT_MODE, key);
+			pubCipher.init(Cipher.ENCRYPT_MODE, pub);
+			keyCipher.init(Cipher.DECRYPT_MODE, key);
 
-		byte[] encriptedChallenge = pubCipher.doFinal(challenge);
-		byte[] decriptedChallenge = keyCipher.doFinal(encriptedChallenge);
+			byte[] encriptedChallenge = pubCipher.doFinal(challenge);
+			byte[] decriptedChallenge = keyCipher.doFinal(encriptedChallenge);
 
-		return Arrays.equals(challenge, decriptedChallenge);
+			return Arrays.equals(challenge, decriptedChallenge);
+		} catch (NoSuchAlgorithmException  e) { e.printStackTrace();
+		} catch (NoSuchPaddingException    e) { e.printStackTrace();
+		} catch (InvalidKeyException       e) {
+		} catch (BadPaddingException       e) {
+		} catch (IllegalBlockSizeException e) {}
+
+		return false;
 	}
 
 	public static void main(String args[])

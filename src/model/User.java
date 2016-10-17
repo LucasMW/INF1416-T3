@@ -131,7 +131,7 @@ public class User {
 			"(login, name, description, cert, password, tanList) "+
 			"values "+
 			String.format(
-					"('%s', '%s', '%s', '%s', '%s', '%s', %d);",
+					"('%s', '%s', '%s', '%s', '%s', '%s');",
 					login,
 					name,
 					description,
