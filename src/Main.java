@@ -20,6 +20,9 @@ import javafx.geometry.*;
 import model.*;
 import fs.*;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+
 public class Main extends Application {
 
 	Stage window;
@@ -39,6 +42,7 @@ public class Main extends Application {
 		db     = new DB();
 		db.connect("main.db");
 
+		//db.viewRegistry(); use this to viewRegistry
 		db.register(1001); //system started
 		window = primaryStage;
 		window.setTitle("INF1416");
@@ -67,7 +71,7 @@ public class Main extends Application {
 
 		// TODO: consume and make closeWindow do the window.close()
 		window.setOnCloseRequest(e -> {
-			//e.consume();
+			e.consume();
 			closeWindow();
 		});
 
@@ -178,9 +182,26 @@ public class Main extends Application {
 		exitBtn.setOnAction(e -> {
 			db.register(5005,u); //exit
 			db.register(9001,u); //exit screen pressented
-			closeWindow();
-			db.register(9002,u); //exit pressed
-			window.close();
+
+			Alert alert = new Alert(AlertType.CONFIRMATION);
+			alert.setTitle("Tela de saída");
+			alert.setHeaderText("Deseja mesmo sair?");
+			alert.setContentText("Sair para sair, voltar para voltar");
+
+			ButtonType buttonTypeConfirm = new ButtonType("Sair");
+			ButtonType buttonTypeCancel = new ButtonType("Voltar");
+
+			alert.getButtonTypes().setAll(buttonTypeConfirm, buttonTypeCancel);
+
+			Optional<ButtonType> result = alert.showAndWait();
+			if (result.get() == buttonTypeConfirm){
+				closeWindow();
+				db.register(9002,u); //exit pressed
+				window.close();
+			} else if (result.get() == buttonTypeCancel) {
+			    db.register(9003,u); //exit pressed
+			}
+
 		});
 		//não há onde colocar o db.register(9003) para nossa implementação
 
@@ -201,7 +222,9 @@ public class Main extends Application {
 	}
 
 	private void closeWindow() {
-		u.updateTotalAccesses(db.conn());
+		if(u!=null) {
+			u.updateTotalAccesses(db.conn());
+		}
 		System.out.println("done");
 		db.register(1002); //system closed
 		//window.close();
