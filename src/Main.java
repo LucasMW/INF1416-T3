@@ -140,8 +140,9 @@ public class Main extends Application {
 				System.out.println("created on " + newFileName);
 				db.register(8009,u,fileName); //decripted
 			} catch (Exception se) {
+				db.register(8012,u,fileName);  //verify false
 				System.out.println("corrupted file");
-				db.register(8010,u,fileName); //not decripted
+				db.register(8011,u,fileName); //not decripted
 			}
 		});
 
@@ -176,9 +177,12 @@ public class Main extends Application {
 		GridPane.setFillHeight (exitBtn, true);
 		exitBtn.setOnAction(e -> {
 			db.register(5005,u); //exit
+			db.register(9001,u); //exit screen pressented
 			closeWindow();
+			db.register(9002,u); //exit pressed
 			window.close();
 		});
+		//não há onde colocar o db.register(9003) para nossa implementação
 
 		grid.getChildren().addAll(
 				nameLabel, nameLabel_,
