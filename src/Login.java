@@ -120,7 +120,7 @@ public class Login {
 						numTries++;
 						nLabel.setText("(incorrect)");
 						clicks.clear();
-						db.register(3004,u); //incorrect 
+						db.register(3004,u); //incorrect
 					}
 				}
 
@@ -151,6 +151,7 @@ public class Login {
 		Stage window = new Stage();
 		window.initModality(Modality.APPLICATION_MODAL);
 		window.setTitle("INF1416:TANList (Etapa 3)");
+		db.register(4001,u); //etapa 3 iniciada
 		window.setMinWidth(250);
 
 		GridPane grid = new GridPane();
@@ -172,8 +173,10 @@ public class Login {
 				u.updateTanList(db.conn());
 				System.out.println(u.tanList.marshal());
 				validTANList = true;
+				db.register(4003,u); //correct
 				window.close();
 			} else {
+				db.register(4004+numTries,u); // +0, +1, +2
 				numTries++;
 				errorLabel.setText("(incorrect)");
 				tanEntry = u.tanList.nextIndex();
@@ -182,6 +185,7 @@ public class Login {
 			}
 
 			if (numTries == 3) {
+				db.register(4009,u); //blocked
 				u.block(db.conn());
 				window.close();
 			}
@@ -198,6 +202,7 @@ public class Login {
 		window.setScene(scene);
 		window.showAndWait();
 
+		db.register(4002,u); //etapa 3 encerrada
 		return validTANList;
 	}
 
