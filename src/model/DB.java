@@ -118,7 +118,7 @@ public class DB {
 				int regid = rs.getInt(3);
 				int userId = rs.getInt(4);
 				String date = rs.getString("time");
-				Pattern pattern = Pattern.compile("([%][s])"); //case insensitive, use [g] for only lower
+				Pattern pattern = Pattern.compile("([%][s])"); 
 				Matcher matcher = pattern.matcher(message);
 				int count = 0;
 				while (matcher.find()) {
